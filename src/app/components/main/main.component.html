@@ -1,0 +1,18 @@
+<div class="news-container">
+    <!-- Latest News Section -->
+    <h2 class="section-title">Последни новини</h2>
+  
+    <div class="news-grid">
+      @for (post of latestPosts; track post; let index = $index) {
+        <div class="news-item" @if (index === 0) class="big">
+          <img [src]="post.thumbnail" [alt]="post.title" class="news-thumbnail" />
+          <div class="news-content">
+            <span class="news-category">{{ post.category }}</span>
+            <h3 class="news-title">{{ post.title }}</h3>
+            <p class="news-date">{{ post.date }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+  

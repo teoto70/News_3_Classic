@@ -1,18 +1,17 @@
 .led-marquee {
-    width: 55%;
-    overflow: hidden;
-    white-space: nowrap;
-    height: 43px;
-    position: fixed;
-    top: 2%;
-    left: 47.45%;
-    transform: translate(-50%, -50%);
-    z-index: 10000;
-    text-align: center;
-    border-left: 1px solid #000000;
-    margin-top: 9px;
-    margin-right: 20px;
-  
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 50px;
+  position: fixed;
+  top: 0; /* Ensure it's at the very top */
+  left: 0; /* Align to the left */
+  transform: none; /* Remove unnecessary translation */
+  z-index: 10000;
+  text-align: center;
+  border: 0px solid #000000;
+  background-color: white;
+  display: flex;
 }
   
   
@@ -21,6 +20,7 @@
     gap: 25px; /* Space between duplicated text */
     animation: marquee 15s linear infinite;
     width: max-content;
+    padding-top: 10px;
   }
   
   .led-text span {
@@ -28,6 +28,7 @@
     font-weight: bold;
     font-family: 'Courier New', Courier, monospace;
     color: red;
+    padding-top: 5px;
    
   }
   .led-text:hover {
