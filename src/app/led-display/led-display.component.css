@@ -1,0 +1,44 @@
+.led-marquee {
+    width: 55%;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 43px;
+    position: fixed;
+    top: 2%;
+    left: 47.45%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    text-align: center;
+    border-left: 1px solid #000000;
+    margin-top: 9px;
+    margin-right: 20px;
+  
+}
+  
+  
+  .led-text {
+    display: flex;
+    gap: 25px; /* Space between duplicated text */
+    animation: marquee 15s linear infinite;
+    width: max-content;
+  }
+  
+  .led-text span {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    color: red;
+   
+  }
+  .led-text:hover {
+    animation-play-state: paused;
+  }
+  
+  @keyframes marquee {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }

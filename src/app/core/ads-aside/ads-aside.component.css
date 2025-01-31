@@ -1,0 +1,29 @@
+.right-sidebar {
+    width: 25%;
+    padding: 20px;
+    position: absolute;
+    top: 53px;
+    margin-left:75%;
+    border: 1px solid #ffffff;
+    border-top: none;
+    border-right: none;
+    height: 100%;
+}
+
+.ad-placeholder {
+    margin-top: 20px;
+    background-color: #004e89;
+    padding: 15px;
+    border-radius: 10px;
+    height: 300px;
+}
+
+
+.post-placeholder {
+    margin-top: 20px;
+    background-color: #004E89;
+    padding: 15px;
+    border-radius: 10px;
+    height: 400px;
+}
+

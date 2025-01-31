@@ -1,0 +1,13 @@
+<app-navbar></app-navbar>
+@if(!isHiddenPage){
+<app-led-display></app-led-display>
+<app-side-navbar></app-side-navbar>
+<app-ads-aside></app-ads-aside>
+}
+<div class="container">
+    @if(!isHiddenPage){
+    <app-top-creators></app-top-creators>
+    }
+    <router-outlet></router-outlet>
+</div>
+

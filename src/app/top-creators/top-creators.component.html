@@ -1,0 +1,14 @@
+<section class="popular-creators">
+    <div class="header">
+      <h2>POPULAR CREATORS</h2>
+    </div>
+   <div class="creators-list">
+        @for (creator of creators; track $index) {
+      <div class="creator">
+        <img [src]="creator.pfp" alt="pfp">
+        <p class="name">{{ creator.username }}</p>
+      </div>
+    }
+    </div>
+  </section>
+  

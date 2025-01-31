@@ -1,0 +1,48 @@
+<section>
+    <div class="login-container">
+      <h2>Login to TRIP<i>news</i></h2>
+      <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+        
+        <!-- Email Field -->
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          ngModel
+          required 
+          email 
+          #emailRef="ngModel"
+          placeholder="Write here..."
+          >
+        
+        <!-- Email Error -->
+        <div *ngIf="emailRef.invalid && emailRef.touched" class="error">
+          <p *ngIf="emailRef.errors?.['required']">Email is required.</p>
+          <p *ngIf="emailRef.errors?.['email']">Enter a valid email.</p>
+        </div>
+  
+        <!-- Password Field -->
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          ngModel
+          required 
+          minlength="6" 
+          #passwordRef="ngModel"
+          placeholder="Write here...">
+        
+        <!-- Password Error -->
+        <div *ngIf="passwordRef.invalid && passwordRef.touched" class="error">
+          <p *ngIf="passwordRef.errors?.['required']">Password is required.</p>
+          <p *ngIf="passwordRef.errors?.['minlength']">Password must be at least 6 characters.</p>
+        </div>
+  
+        <!-- Submit Button -->
+        <button type="submit" class="login-btn" [disabled]="loginForm.invalid">Login</button>
+      </form>
+    </div>
+  </section>
+  
