@@ -43,9 +43,9 @@ export class MainComponent implements OnInit {
   groupByCategory(articles: any[]) {
     const categoriesMap = new Map<string, any[]>();
 
-    // Group posts by category
+    // Group posts by category (random assignment)
     articles.forEach(article => {
-      const category = `Category ${Math.floor(Math.random() * 3) + 1}`; // Mock categories
+      const category = `Category ${Math.floor(Math.random() * 3) + 1}`;
       if (!categoriesMap.has(category)) {
         categoriesMap.set(category, []);
       }
@@ -54,13 +54,19 @@ export class MainComponent implements OnInit {
 
     // Ensure each category has exactly 8 posts
     const result = Array.from(categoriesMap.entries()).map(([tag, posts]) => {
-      while (posts.length < 8) {
-        posts.push({
-          id: posts.length + 1,
-          title: `Mock Post ${posts.length + 1}`,
-          thumbnailUrl: `https://via.placeholder.com/150?text=Mock+Post+${posts.length + 1}`,
-          category: tag
-        });
+      if (posts.length < 8) {
+        // Pad with mock posts if fewer than 8
+        while (posts.length < 8) {
+          posts.push({
+            id: posts.length + 1,
+            title: `Mock Post ${posts.length + 1}`,
+            thumbnailUrl: `https://via.placeholder.com/150?text=Mock+Post+${posts.length + 1}`,
+            category: tag
+          });
+        }
+      } else if (posts.length > 8) {
+        // Trim the posts array if more than 8
+        posts = posts.slice(0, 8);
       }
       return { tag, posts };
     });
