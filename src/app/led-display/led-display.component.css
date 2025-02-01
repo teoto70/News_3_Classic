@@ -7,7 +7,7 @@
   top: 0; /* Ensure it's at the very top */
   left: 0; /* Align to the left */
   transform: none; /* Remove unnecessary translation */
-  z-index: 10000;
+  z-index: 10000999;
   text-align: center;
   border: 0px solid #000000;
   background-color: white;

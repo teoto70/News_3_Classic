@@ -1,62 +1,60 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main',
-  standalone: true,
+  standalone: true, // Mark as standalone
+  imports: [CommonModule], // Import CommonModule for *ngFor and other directives
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent {
-  latestPosts = [
-    { title: 'Lorem ipsum dolor sit amet', category: 'Travel', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Consectetur adipiscing elit', category: 'Travel', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Sed do eiusmod tempor incididunt', category: 'News', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Ut labore et dolore magna aliqua', category: 'News', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Quis nostrud exercitation ullamco', category: 'Life', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Duis aute irure dolor in reprehenderit', category: 'Life', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Excepteur sint occaecat cupidatat', category: 'Travel', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' },
-    { title: 'Sunt in culpa qui officia deserunt', category: 'News', date: '01/02/2025', thumbnail: 'https://via.placeholder.com/400x250' }
-  ];
+export class MainComponent implements OnInit {
+  categories: any[] = []; // Array to hold grouped posts by category
+  isLoading = false; // Loading state
+  currentPage = 1; // Pagination (if needed)
 
-  sections = [
-    {
-      tag: 'Travel',
-      posts: [
-        { title: 'Lorem ipsum dolor sit amet', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Consectetur adipiscing elit', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Sed do eiusmod tempor incididunt', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Ut labore et dolore magna aliqua', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Quis nostrud exercitation ullamco', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Duis aute irure dolor in reprehenderit', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Excepteur sint occaecat cupidatat', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Sunt in culpa qui officia deserunt', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' }
-      ]
-    },
-    {
-      tag: 'News',
-      posts: [
-        { title: 'Breaking news: Lorem ipsum dolor sit', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'World event: Consectetur adipiscing', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Exclusive: Sed do eiusmod tempor', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Politics: Ut labore et dolore magna', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Finance update: Quis nostrud exercitation', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Tech trends: Duis aute irure dolor', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Health: Excepteur sint occaecat', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Sports: Sunt in culpa qui officia', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' }
-      ]
-    },
-    {
-      tag: 'Life',
-      posts: [
-        { title: 'Lifestyle: Lorem ipsum dolor sit amet', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Wellness: Consectetur adipiscing elit', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Mindfulness: Sed do eiusmod tempor', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Fitness: Ut labore et dolore magna', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Self-care: Quis nostrud exercitation', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Relationships: Duis aute irure dolor', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Mental Health: Excepteur sint occaecat', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' },
-        { title: 'Travel & Life: Sunt in culpa qui officia', thumbnail: 'https://www.pexels.com/search/free%20no%20copyright/' }
-      ]
-    }
-  ];
+  constructor(private http: HttpClient) {} // Inject HttpClient
+
+  ngOnInit() {
+    this.fetchNews(); // Fetch data when the component initializes
+  }
+
+  fetchNews() {
+    if (this.isLoading) return; // Prevent multiple requests
+
+    this.isLoading = true; // Set loading state
+    const apiUrl = `https://jsonplaceholder.typicode.com/photos?_page=${this.currentPage}&_limit=10`;
+
+    // Make the API request
+    this.http.get(apiUrl).subscribe({
+      next: (data: any) => {
+        console.log('Data received:', data); // Debugging: Log the data
+        this.categories = this.groupByCategory(data); // Group data by category
+        this.isLoading = false; // Reset loading state
+        this.currentPage++; // Increment page for pagination
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error); // Log errors
+        this.isLoading = false; // Reset loading state
+      }
+    });
+  }
+
+  groupByCategory(articles: any[]) {
+    // Group articles by category (mock logic)
+    const categoriesMap = new Map<string, any[]>();
+    articles.forEach(article => {
+      const category = `Category ${Math.floor(Math.random() * 3) + 1}`; // Mock categories
+      if (!categoriesMap.has(category)) {
+        categoriesMap.set(category, []);
+      }
+      categoriesMap.get(category)!.push(article);
+    });
+
+    return Array.from(categoriesMap.entries()).map(([tag, posts]) => ({
+      tag,
+      posts
+    }));
+  }
 }
