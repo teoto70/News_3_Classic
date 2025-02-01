@@ -1,23 +1,23 @@
-<!-- Ad Banner -->
-
-  
-  <!-- Fixed Header -->
-  <header class="w-full bg-white shadow-md fixed top-[50px] left-0 right-0 z-50">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <!-- Logo (Left Aligned) -->
-      <div class="text-xl font-bold text-blue-600">
-        TripNews2 Beta
-      </div>
-  
-      <!-- Navigation (Right Aligned) -->
-      <nav>
-        <ul class="flex space-x-6">
-          <li><a href="#" class="hover:text-blue-500">News</a></li>
-          <li><a href="#" class="hover:text-blue-500">Sports</a></li>
-          <li><a href="#" class="hover:text-blue-500">Tech</a></li>
-          <li><a href="#" class="hover:text-blue-500">Business</a></li>
-          <li><a href="#" class="hover:text-blue-500">Contact</a></li>
-        </ul>
-      </nav>
+<!-- Fixed Header -->
+<header class="w-full bg-white shadow-md fixed top-[50px] left-0 right-0 z-50">
+  <div class="container mx-auto flex justify-between items-center p-4">
+    <!-- Logo (Left Aligned) -->
+    <div class="text-xl font-bold text-blue-600">
+      TripNews2 Beta
     </div>
-  </header>
+
+    <!-- Navigation (Right Aligned) -->
+    <nav>
+      <ul class="flex space-x-6">
+        <!-- Loop over the category list -->
+        <li *ngFor="let category of categoriesList">
+          <a href="#"
+             (click)="onSelect(category); $event.preventDefault()"
+             class="hover:text-blue-500">
+            {{ category }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

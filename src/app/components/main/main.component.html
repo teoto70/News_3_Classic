@@ -1,21 +1,27 @@
 <div class="main-container">
-    @if (categories.length > 0) {
-      @for (category of categories; track category.tag) {
-        <div class="category">
-          <h2>{{ category.tag }}</h2>
-          <div class="grid-container">
-            @for (post of category.posts; track post.id) {
-              <div class="grid-item">
-                <img [src]="post.thumbnailUrl" alt="{{ post.title }}" loading="lazy" class="thumbnail">
-                <div class="post-name">{{ post.title }}</div>
-              </div>
-            }
-          </div>
-        </div>
-      }
-    } @else if (isLoading) {
-      <div class="loading-spinner">Loading...</div>
-    } @else {
-      <div class="no-data">No posts found.</div>
-    }
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    Loading...
   </div>
+
+  <!-- No Data Found -->
+  <div *ngIf="!isLoading && categories.length === 0" class="no-data">
+    No posts found.
+  </div>
+
+  <!-- Posts Display -->
+  <ng-container *ngIf="!isLoading && categories.length > 0">
+    <div *ngFor="let group of categories; trackBy: trackById" class="category-group">
+      <h2>{{ group.tag }}</h2>
+      <div class="grid-container">
+        <div *ngFor="let post of group.posts; trackBy: trackById" class="grid-item">
+          <img [src]="post.thumbnailUrl"
+               alt="{{ post.title }}"
+               loading="lazy"
+               class="thumbnail">
+          <div class="post-name">{{ post.title }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

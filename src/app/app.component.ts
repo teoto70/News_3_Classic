@@ -1,34 +1,44 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { NavbarComponent } from "./core/navbar/navbar.component";
-import { AdsAsideComponent } from './core/ads-aside/ads-aside.component';
-import { SideNavbarComponent } from "./core/side-navbar/side-navbar.component";
 import { LedDisplayComponent } from './led-display/led-display.component';
-import { TopCreatorsComponent } from "./top-creators/top-creators.component";
-import { HeaderComponent } from "./components/header/header.component";
-import { FooterComponent } from './components/footer/footer.component';
+import { AdsAsideComponent } from './core/ads-aside/ads-aside.component';
+import { HeaderComponent } from './components/header/header.component';
 import { MainComponent } from './components/main/main.component';
+import { FooterComponent } from './components/footer/footer.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, AdsAsideComponent, SideNavbarComponent, LedDisplayComponent, TopCreatorsComponent, HeaderComponent, FooterComponent, MainComponent],
+  imports: [
+    RouterOutlet,
+    LedDisplayComponent,
+    AdsAsideComponent,
+    HeaderComponent,
+    MainComponent,
+    FooterComponent
+  ],
   templateUrl: './app.component.html',
-  template: `<app-led-display text="Scrolling LED Text in Angular 15+!"></app-led-display>`,
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'news';
-
-  isHiddenPage = false;
+  // Default selected category; this is passed to the main component.
+  selectedCategory: string = 'All';
 
   constructor(private router: Router) {
+    // (Optional) Subscribe to router events if you want to hide components on certain routes.
     this.router.events.subscribe(() => {
-      if (this.router.url === '/creator/login' || this.router.url === '/admin/createUser') {
-        this.isHiddenPage = true;
-      } else {
-        this.isHiddenPage = false;
-      }
+      // Your route-based logic can go here.
     });
+  }
 
-}
+  /**
+   * Called when the HeaderComponent emits a categorySelected event.
+   * Note: The HTML calls this method "onCategorySelect", so make sure the name matches.
+   *
+   * @param category The category selected by the user.
+   */
+  onCategorySelect(category: string): void {
+    this.selectedCategory = category;
+  }
 }
