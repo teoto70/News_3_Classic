@@ -1,7 +1,7 @@
 .main-container {
     margin-top: 100px;
-    margin-left: 5%;
-    margin-right: 20%;
+    margin-left: 0%;
+    margin-right: 0%;
   }
   
   .category {
@@ -10,8 +10,8 @@
   
   .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns */
-    gap: 16px; /* Space between grid items */
+    grid-template-columns: repeat(4, 1fr); /* 3 columns */
+    gap: 5px; /* Space between grid items */
   }
   
   .grid-item {
@@ -29,6 +29,7 @@
   
   .thumbnail {
     width: 100%;
+    aspect-ratio: 1/1;
     height: auto;
     display: block;
   }

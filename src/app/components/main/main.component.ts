@@ -4,46 +4,46 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main',
-  standalone: true, // Mark as standalone
-  imports: [CommonModule], // Import CommonModule for *ngFor and other directives
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
-  categories: any[] = []; // Array to hold grouped posts by category
-  isLoading = false; // Loading state
-  currentPage = 1; // Pagination (if needed)
+  categories: any[] = [];
+  isLoading = false;
+  currentPage = 1;
 
-  constructor(private http: HttpClient) {} // Inject HttpClient
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.fetchNews(); // Fetch data when the component initializes
+    this.fetchNews();
   }
 
   fetchNews() {
-    if (this.isLoading) return; // Prevent multiple requests
+    if (this.isLoading) return;
 
-    this.isLoading = true; // Set loading state
-    const apiUrl = `https://jsonplaceholder.typicode.com/photos?_page=${this.currentPage}&_limit=10`;
+    this.isLoading = true;
+    const apiUrl = `https://jsonplaceholder.typicode.com/photos?_page=${this.currentPage}&_limit=24`; // Fetch 24 posts
 
-    // Make the API request
     this.http.get(apiUrl).subscribe({
       next: (data: any) => {
-        console.log('Data received:', data); // Debugging: Log the data
-        this.categories = this.groupByCategory(data); // Group data by category
-        this.isLoading = false; // Reset loading state
-        this.currentPage++; // Increment page for pagination
+        console.log('Data received:', data);
+        this.categories = this.groupByCategory(data);
+        this.isLoading = false;
+        this.currentPage++;
       },
       error: (error) => {
-        console.error('Error fetching data:', error); // Log errors
-        this.isLoading = false; // Reset loading state
+        console.error('Error fetching data:', error);
+        this.isLoading = false;
       }
     });
   }
 
   groupByCategory(articles: any[]) {
-    // Group articles by category (mock logic)
     const categoriesMap = new Map<string, any[]>();
+
+    // Group posts by category
     articles.forEach(article => {
       const category = `Category ${Math.floor(Math.random() * 3) + 1}`; // Mock categories
       if (!categoriesMap.has(category)) {
@@ -52,9 +52,19 @@ export class MainComponent implements OnInit {
       categoriesMap.get(category)!.push(article);
     });
 
-    return Array.from(categoriesMap.entries()).map(([tag, posts]) => ({
-      tag,
-      posts
-    }));
+    // Ensure each category has exactly 8 posts
+    const result = Array.from(categoriesMap.entries()).map(([tag, posts]) => {
+      while (posts.length < 8) {
+        posts.push({
+          id: posts.length + 1,
+          title: `Mock Post ${posts.length + 1}`,
+          thumbnailUrl: `https://via.placeholder.com/150?text=Mock+Post+${posts.length + 1}`,
+          category: tag
+        });
+      }
+      return { tag, posts };
+    });
+
+    return result;
   }
 }
