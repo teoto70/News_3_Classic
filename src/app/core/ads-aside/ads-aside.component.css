@@ -3,7 +3,7 @@
     padding: 5px;
     position: absolute;
     top: 100px;
-    margin-left:75%;
+    margin-left: 75%;
     border: 1px solid #ffffff;
     border-top: none;
     border-right: none;
@@ -13,18 +13,48 @@
 
 .ad-placeholder {
     margin-top: 20px;
-    background-color: #004e89;
-    padding: 15px;
+    background-color: #004e8900;
+    padding:5px;
     border-radius: 10px;
     height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
-
-.post-placeholder {
-    margin-top: 20px;
-    background-color: #004E89;
-    padding: 15px;
-    border-radius: 10px;
-    height: 400px;
+/* New styles for the random post thumbnail */
+.random-post {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    aspect-ratio: 1/1;
+    height: auto;
+    
 }
 
+.thumbnail-image {
+    width: 100%;
+    aspect-ratio: 1/1;
+    height: auto;
+    object-fit: cover;
+}
+
+.thumbnail-title {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Ensure the "Check also:" text appears at the bottom */
+.check-also {
+    font-size: 16px;
+    color: #000000;
+    font-weight: bold;
+    z-index: 10000
+}

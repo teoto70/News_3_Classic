@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { PostService } from '../../services/post.service';
 
 @Component({
   selector: 'app-main',
@@ -20,7 +21,7 @@ export class MainComponent implements OnChanges {
   isLoading = false;
   currentPage = 1;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postService: PostService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     // When the selected category changes, reset and re-fetch posts.
@@ -65,6 +66,10 @@ export class MainComponent implements OnChanges {
             posts: filtered
           }];
         }
+
+        // Store the fetched posts in the PostService
+        this.postService.setPosts(data);
+
         this.isLoading = false;
         this.currentPage++;
       },
