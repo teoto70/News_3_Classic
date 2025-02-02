@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { LedDisplayComponent } from './led-display/led-display.component';
 import { AdsAsideComponent } from './core/ads-aside/ads-aside.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MainComponent } from './components/main/main.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    CommonModule, // Needed for directives like *ngIf
     RouterOutlet,
     LedDisplayComponent,
     AdsAsideComponent,
@@ -22,20 +25,29 @@ import { FooterComponent } from './components/footer/footer.component';
 })
 export class AppComponent {
   title = 'news';
-  // Default selected category; this is passed to the main component.
   selectedCategory: string = 'All';
+  isHiddenPage = false;
 
   constructor(private router: Router) {
-    // (Optional) Subscribe to router events if you want to hide components on certain routes.
-    this.router.events.subscribe(() => {
-      // Your route-based logic can go here.
-    });
+    // Use NavigationEnd events to ensure the URL is updated
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        // Check if the URL is one of the routes where the main content should be hidden
+        if (
+          event.url === '/login' ||
+          event.url === '/create-user' ||
+          event.url === '/upload'
+        ) {
+          this.isHiddenPage = true;
+        } else {
+          this.isHiddenPage = false;
+        }
+      });
   }
 
   /**
    * Called when the HeaderComponent emits a categorySelected event.
-   * Note: The HTML calls this method "onCategorySelect", so make sure the name matches.
-   *
    * @param category The category selected by the user.
    */
   onCategorySelect(category: string): void {

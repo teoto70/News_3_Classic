@@ -1,8 +1,15 @@
+<!-- Header and LED display are always visible -->
+<app-header (categorySelected)="onCategorySelect($event)"></app-header>
 <app-led-display></app-led-display>
-<app-ads-aside></app-ads-aside>
-<div class="container">
-    <app-header (categorySelected)="onCategorySelect($event)"></app-header>
-    <app-main [selectedCategory]="selectedCategory"></app-main>
-    <app-footer></app-footer>
-    <router-outlet></router-outlet>
+
+<!-- Conditionally display MainComponent and AdsAsideComponent -->
+<div *ngIf="!isHiddenPage">
+  <app-main [selectedCategory]="selectedCategory"></app-main>
+  <app-ads-aside></app-ads-aside>
 </div>
+
+<!-- Router outlet to display routed components like login, create-user, upload -->
+<router-outlet></router-outlet>
+
+<!-- Footer is always visible -->
+<app-footer></app-footer>

@@ -1,15 +1,13 @@
+// app.routes.ts
 import { Routes } from '@angular/router';
 import { LoginComponent } from './user/login/login.component';
 import { CreateUserComponent } from './user/create-user/create-user.component';
-import { MainComponent } from './components/main/main.component';
-import { UploadPostComponent } from './components/upload-post/upload-post.component'; // Adjust the path as needed
-
+import { UploadPostComponent } from './components/upload-post/upload-post.component';
 
 export const routes: Routes = [
-    
-    { path: 'home', component: MainComponent},
-    {path: 'creator/login', component: LoginComponent},
-    {path: 'admin/createUser', component: CreateUserComponent},
-    {path: '**', redirectTo: '/home'},
-    { path: '/upload', component: UploadPostComponent},
+  // Remove the default route that loads MainComponent.
+  { path: 'login', component: LoginComponent },
+  { path: 'create-user', component: CreateUserComponent },
+  { path: 'upload', component: UploadPostComponent },
+  { path: '**', redirectTo: '' } // Optionally, handle unknown routes.
 ];
