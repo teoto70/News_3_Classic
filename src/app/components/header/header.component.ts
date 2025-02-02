@@ -1,28 +1,45 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
+import { User } from '@angular/fire/auth'; // ✅ Use Firebase’s User type instead of custom one
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule], // Include CommonModule here
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent {
-  // Define the list of categories.
+export class HeaderComponent implements OnInit {
   categoriesList: string[] = ['All', 'News', 'Sports', 'Tech', 'Business'];
-
-  // Event emitter to notify the parent when a category is selected.
   @Output() categorySelected = new EventEmitter<string>();
 
+  isLoggedIn: boolean = false;
+  currentUser: User | null = null; // ✅ Ensure it's the Firebase User type
+
+  constructor(private userService: UserService, private router: Router) {}
+
+  ngOnInit(): void {
+    // Subscribe to authentication state changes
+    this.userService.currentUser$.subscribe((user) => {
+      this.currentUser = user; // ✅ Assign Firebase User type
+      this.isLoggedIn = !!user; // Convert user to boolean
+      
+      console.log('User detected in header:', user);
+      console.log('isLoggedIn:', this.isLoggedIn);
+    });
+  }
+
   /**
-   * Called when a category link is clicked.
-   * Emits the selected category.
-   *
-   * @param category The chosen category.
+   * ✅ Logs out the user and redirects to `/`.
    */
+  async logout(): Promise<void> {
+    await this.userService.logout(); // ✅ Ensure `logout()` is called correctly
+    this.router.navigate(['/']); // Redirect to home after logout
+  }
+
   onSelect(category: string): void {
-    // You can also add a console log here for debugging.
     console.log('Selected category:', category);
     this.categorySelected.emit(category);
   }

@@ -1,23 +1,26 @@
 <!-- Fixed Header -->
 <header class="w-full bg-white shadow-md fixed top-[50px] left-0 right-0 z-50">
   <div class="container mx-auto flex justify-between items-center p-4">
+    
     <!-- Logo (Left Aligned) -->
     <div class="text-xl font-bold text-blue-600">
       TripNews2 Beta
     </div>
 
-    <!-- Navigation (Right Aligned) -->
+    <!-- Navigation Menu -->
     <nav>
-      <ul class="flex space-x-6">
-        <!-- Loop over the category list -->
+      <ul class="flex space-x-4">
         <li *ngFor="let category of categoriesList">
-          <a href="#"
-             (click)="onSelect(category); $event.preventDefault()"
-             class="hover:text-blue-500">
-            {{ category }}
-          </a>
+          <a (click)="onSelect(category)">{{ category }}</a>
         </li>
       </ul>
     </nav>
+
+    <!-- ✅ User Buttons (Only Visible If Logged In) -->
+    <div *ngIf="isLoggedIn" class="user">
+      <button routerLink="/create-post" class="createBtn">Create Post</button>
+      <button (click)="logout()" class="logoutBtn">Logout</button>
+    </div>
+
   </div>
 </header>

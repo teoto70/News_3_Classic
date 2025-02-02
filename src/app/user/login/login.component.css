@@ -6,16 +6,16 @@ section {
     height: 100vh;
 }
 
-/* Login container */
+/* Login container (similar to registration form) */
 .login-container {
-    background-color: #FFF8E7;
+    background-color: #FFF8E7; /* Light beige background */
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 320px;
     margin-bottom: 100px;
-    padding-bottom:30px;
+    padding-bottom: 30px;
 }
 
 /* Form styling */
@@ -29,27 +29,43 @@ label {
     text-align: left;
     font-weight: bold;
     margin-bottom: 5px;
+    font-size: 14px;
 }
 
+/* Input fields */
 input {
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+/* Focus effect on input fields */
+input:focus {
+    border-color: #FFC107;
+}
+
+/* Success message */
+.success {
+    color: green;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: bold;
 }
 
 /* Error messages */
 .error {
-    font-size: 12px;
-    margin-bottom: 10px;
-}
-.error p {
+    font-size: 14px;
     color: red;
     font-style: italic;
+    margin-top: 10px;
 }
-/* Button */
-.login-btn {
+
+/* Submit Button */
+button[type="submit"] {
     background-color: #FFC107;
     color: black;
     padding: 10px;
@@ -58,9 +74,26 @@ input {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
-.login-btn:disabled {
+button[type="submit"]:hover {
+    background-color: #E0A800;
+}
+
+button[type="submit"]:disabled {
     background-color: #E0A800;
     cursor: not-allowed;
+}
+
+/* Responsive improvements */
+@media (max-width: 400px) {
+    .login-container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    input {
+        font-size: 14px;
+    }
 }

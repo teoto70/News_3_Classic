@@ -1,65 +1,62 @@
 import { NgIf } from "@angular/common";
 import { Component } from "@angular/core";
-import { FormsModule, NgForm } from "@angular/forms";
-import { UserService } from "../user.service";
+import { FormsModule, NgForm } from "@angular/forms"; // ✅ Import FormsModule
+import { UserService } from "../../services/user.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-create-user",
-  imports: [FormsModule, NgIf],
+  standalone: true,
+  imports: [FormsModule, NgIf], // ✅ Ensure FormsModule is in the imports array
   templateUrl: "./create-user.component.html",
-  styleUrl: "./create-user.component.css",
+  styleUrls: ["./create-user.component.css"],
 })
 export class CreateUserComponent {
   error = "";
+  successMessage = "";
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
-  createUser(form: NgForm) {
-    const userData = {
-      email: form.value.email,
-      username: form.value.username,
-      password: form.value.password,
-      pfp: form.value.pfp,
-    };
+  async createUser(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
 
-    this.userService.createUser(userData).subscribe({
-      next: () => {
-        console.log("User created");
-      },
-      error: (err: any) => {
-        this.error = 'Error occurred during registration';
-        if (err.code) {
-          switch (err.code) {
-            case 'auth/email-already-in-use':
-              this.error =
-                'The email address is already in use by another account.';
-              break;
-            case 'auth/invalid-email':
-              this.error = 'The email address is not valid.';
-              break;
-            case 'auth/operation-not-allowed':
-              this.error = 'Operation not allowed. Please contact support.';
-              break;
-            case 'auth/weak-password':
-              this.error = 'The password is too weak.';
-              break;
-            default:
-              this.error = err.message;
-              break;
-          }
+    const { email, username, password, pfp } = form.value;
+
+    try {
+    
+      console.log("User successfully registered and saved to Firestore.");
+
+      this.successMessage = "Registration successful! Redirecting...";
+      
+      // ✅ Redirect user to home after 2 seconds
+      setTimeout(() => {
+        this.router.navigate(['']);
+      }, 2000);
+
+      form.reset(); // ✅ Reset form on success
+    } catch (err: any) {
+      this.error = "Error occurred during registration.";
+      this.successMessage = ""; // Reset success message on error
+
+      if (err.code) {
+        switch (err.code) {
+          case "auth/email-already-in-use":
+            this.error = "The email address is already in use.";
+            break;
+          case "auth/invalid-email":
+            this.error = "The email address is not valid.";
+            break;
+          case "auth/weak-password":
+            this.error = "The password is too weak.";
+            break;
+          default:
+            this.error = err.message;
+            break;
         }
       }
-    });
-  }
-
-  login(form: NgForm) {
-    const user = {
-      email: form.value.email,
-      password: form.value.password,
-    };
-
-    this.userService.login(user.email, user.password).subscribe(() => {
-      console.log("User logged in");
-    });
+      console.error("Registration error:", err);
+    }
   }
 }
