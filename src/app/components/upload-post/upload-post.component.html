@@ -1,76 +1,70 @@
 <div class="upload-container">
-    <!-- Header Section -->
-    <header class="upload-header">
-      <!-- Back button: note the attribute is a standard HTML class -->
-      <button class="back-button" (click)="goBack()">
-        <!-- Optional SVG icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="back-icon">
-          <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-        </svg>
-        Back
-      </button>
-      <h1>New Post</h1>
-    </header>
-  
-    <!-- Main Form Section -->
-    <form [formGroup]="uploadForm" (ngSubmit)="onUpload()" class="post-form">
-      <!-- Title Input with Character Count -->
-      <div class="form-group title-group">
-        <input type="text" formControlName="title" placeholder="Post Title (Required)" maxlength="300" />
-        <div class="char-counter">
-          {{ uploadForm.get('title')?.value?.length || 0 }}/300
-        </div>
+  <!-- Header Section -->
+  <header class="upload-header">
+    <button class="back-button" (click)="goBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="back-icon">
+        <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+      Back
+    </button>
+    <h1>New Post</h1>
+  </header>
+
+  <!-- Main Form Section -->
+  <form [formGroup]="uploadForm" (ngSubmit)="onUpload()" class="post-form">
+    <!-- Title Input -->
+    <div class="form-group title-group">
+      <input type="text" formControlName="title" placeholder="Post Title (Required)" maxlength="300" />
+      <div class="char-counter">
+        {{ uploadForm.get('title')?.value?.length || 0 }}/300
       </div>
-  
-      <!-- Categories Multi-Select (Checkboxes) -->
-      <div class="form-group categories-group">
-        <label class="group-label">Select Categories:</label>
-        <div class="categories-list">
-          <label *ngFor="let category of categoriesList; let i = index" class="category-item">
-            <!-- Use categoryControls instead of categoriesFormArray.controls[i] -->
-            <input type="checkbox" [formControl]="categoryControls[i]" />
-            {{ category }}
-          </label>
-        </div>
+    </div>
+
+    <!-- Categories Multi-Select -->
+    <div class="form-group categories-group">
+      <label class="group-label">Select Categories:</label>
+      <div class="categories-list">
+        <label *ngFor="let category of categoriesList; let i = index" class="category-item">
+          <input type="checkbox" [formControl]="categoryControls[i]" />
+          {{ category }}
+        </label>
       </div>
-  
-      <!-- Module 1: Text Content -->
-      <div class="form-group module text-module">
-        <h2>Text Module</h2>
-        <textarea formControlName="textContent" placeholder="Enter your text here"></textarea>
-      </div>
-  
-      <!-- Module 2: Media Upload -->
-      <div class="form-group module media-module">
-        <h2>Photo / Video Module</h2>
-        <input type="file" (change)="onFileChange($event)" multiple accept="image/*,video/*" />
-      </div>
-  
-      <!-- Action Buttons -->
-      <div class="actions-bar">
-        <button type="button" class="preview-button" (click)="onPreview()">Preview</button>
-        <button type="submit" class="upload-button">Upload</button>
-      </div>
-    </form>
-  
-    <!-- Preview Section -->
-    <div *ngIf="previewMode" class="preview-section">
-      <h2>Preview</h2>
-      <div class="preview-content">
-        <h3>{{ previewData?.title }}</h3>
-        <p class="preview-categories">Categories: {{ previewData?.categories.join(', ') }}</p>
-        <div class="preview-text">
-          {{ previewData?.textContent }}
-        </div>
-        <div class="preview-files" *ngIf="previewData?.files?.length">
-          <p>Files:</p>
-          <ul>
-            <li *ngFor="let file of previewData.files">
-              {{ file.name }}
-            </li>
-          </ul>
-        </div>
+    </div>
+
+    <!-- Quill Editor -->
+    <div class="form-group module text-module">
+      <h2>Text Module</h2>
+      <quill-editor #quillEditor theme="snow"></quill-editor>
+    </div>
+
+    <!-- Media Upload -->
+    <div class="form-group module media-module">
+      <h2>Photo / Video Module</h2>
+      <input type="file" (change)="onFileChange($event)" multiple accept="image/*,video/*" />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions-bar">
+      <button type="button" class="preview-button" (click)="onPreview()">Preview</button>
+      <button type="submit" class="upload-button">Upload</button>
+    </div>
+  </form>
+
+  <!-- Preview Section -->
+  <div *ngIf="previewMode" class="preview-section">
+    <h2>Preview</h2>
+    <div class="preview-content">
+      <h3>{{ previewData?.title }}</h3>
+      <p class="preview-categories">Categories: {{ previewData?.categories.join(', ') }}</p>
+      <div class="preview-text" [innerHTML]="previewData?.textContent"></div>
+      <div class="preview-files" *ngIf="previewData?.files?.length">
+        <p>Files:</p>
+        <ul>
+          <li *ngFor="let file of previewData.files">
+            {{ file.name }}
+          </li>
+        </ul>
       </div>
     </div>
   </div>
-  
+</div>
