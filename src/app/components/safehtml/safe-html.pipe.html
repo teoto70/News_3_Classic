@@ -1,0 +1,31 @@
+<!-- Preview Template -->
+<div class="post-preview-container" *ngIf="previewMode">
+    <div class="post-header">
+      <h1 class="post-title">{{ previewData.title }}</h1>
+      <div class="post-metadata">
+        <div class="post-categories">
+          <span class="category-tag" *ngFor="let category of previewData.categories">
+            {{ category }}
+          </span>
+        </div>
+        <div class="post-date">
+          {{ currentDate | date:'medium' }}
+        </div>
+      </div>
+    </div>
+  
+    <div class="post-content">
+      <!-- Safe HTML binding for Quill content -->
+      <div class="quill-content" [innerHTML]="previewData.textContent | safeHtml"></div>
+    </div>
+  
+    <div class="post-attachments" *ngIf="previewData.files?.length">
+      <h3>Attachments</h3>
+      <div class="attachments-list">
+        <div class="attachment-item" *ngFor="let file of previewData.files">
+          <span class="file-name">{{ file.name }}</span>
+          <span class="file-size">({{ formatFileSize(file.size) }})</span>
+        </div>
+      </div>
+    </div>
+  </div>

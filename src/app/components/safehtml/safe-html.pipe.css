@@ -1,0 +1,123 @@
+/* Post Preview Styles */
+.post-preview-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .post-header {
+    margin-bottom: 2rem;
+  }
+  
+  .post-title {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  
+  .post-metadata {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .post-categories {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .category-tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+  }
+  
+  .post-date {
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+  
+  .post-content {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  
+  /* Quill Content Specific Styles */
+  .quill-content {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .quill-content h1,
+  .quill-content h2,
+  .quill-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+  }
+  
+  .quill-content p {
+    margin-bottom: 1rem;
+  }
+  
+  .quill-content ul,
+  .quill-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  
+  .quill-content blockquote {
+    border-left: 4px solid #e9ecef;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #6c757d;
+  }
+  
+  .quill-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+  
+  .post-attachments {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .post-attachments h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+  }
+  
+  .attachments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .attachment-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .file-name {
+    font-weight: 500;
+  }
+  
+  .file-size {
+    color: #6c757d;
+    font-size: 0.875rem;
+  }

@@ -10,61 +10,89 @@
     <h1>New Post</h1>
   </header>
 
-  <!-- Main Form Section -->
-  <form [formGroup]="uploadForm" (ngSubmit)="onUpload()" class="post-form">
-    <!-- Title Input -->
-    <div class="form-group title-group">
-      <input type="text" formControlName="title" placeholder="Post Title (Required)" maxlength="300" />
-      <div class="char-counter">
-        {{ uploadForm.get('title')?.value?.length || 0 }}/300
+  <!-- Main Form Section (Hidden in Preview Mode) -->
+  <div *ngIf="!previewMode; else previewTemplate">
+    <form [formGroup]="uploadForm" class="post-form">
+      <!-- Title Input -->
+      <div class="form-group title-group">
+        <input type="text" formControlName="title" placeholder="Post Title (Required)" maxlength="300" />
+        <div class="char-counter">
+          {{ uploadForm.get('title')?.value?.length || 0 }}/300
+        </div>
       </div>
-    </div>
 
-    <!-- Categories Multi-Select -->
-    <div class="form-group categories-group">
-      <label class="group-label">Select Categories:</label>
-      <div class="categories-list">
-        <label *ngFor="let category of categoriesList; let i = index" class="category-item">
-          <input type="checkbox" [formControl]="categoryControls[i]" />
-          {{ category }}
-        </label>
+      <!-- Categories Multi-Select -->
+      <div class="form-group categories-group" formArrayName="categories">
+        <label class="group-label">Select Categories:</label>
+        <div class="categories-list">
+          <div *ngFor="let category of categoriesList; let i = index" class="category-item">
+            <label>
+              <input type="checkbox" [formControlName]="i" />
+              {{ category }}
+            </label>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Quill Editor -->
-    <div class="form-group module text-module">
-      <h2>Text Module</h2>
-      <quill-editor #quillEditor theme="snow"></quill-editor>
-    </div>
+      <!-- Quill Editor -->
+      <div class="form-group module text-module">
+        <h2>Text Module</h2>
+        <!-- Add #quillEditor reference here -->
+        <quill-editor #quillEditor formControlName="content" theme="snow"></quill-editor>
+      </div>
 
-    <!-- Media Upload -->
-    <div class="form-group module media-module">
-      <h2>Photo / Video Module</h2>
-      <input type="file" (change)="onFileChange($event)" multiple accept="image/*,video/*" />
-    </div>
+      <!-- Media Upload -->
+      <div class="form-group module media-module">
+        <h2>Photo / Video Module</h2>
+        <input type="file" (change)="onFileSelected($event, 'image')" multiple accept="image/*" />
+        <input type="file" (change)="onFileSelected($event, 'video')" multiple accept="video/*" />
+      </div>
 
-    <!-- Action Buttons -->
-    <div class="actions-bar">
-      <button type="button" class="preview-button" (click)="onPreview()">Preview</button>
-      <button type="submit" class="upload-button">Upload</button>
-    </div>
-  </form>
+      <!-- Action Buttons -->
+      <div class="actions-bar">
+        <button type="button" class="preview-button" (click)="onPreview()">Preview</button>
+        <button type="button" class="upload-button" (click)="onUpload()">Upload</button>
+      </div>
+    </form>
+  </div>
 
   <!-- Preview Section -->
-  <div *ngIf="previewMode" class="preview-section">
-    <h2>Preview</h2>
-    <div class="preview-content">
-      <h3>{{ previewData?.title }}</h3>
-      <p class="preview-categories">Categories: {{ previewData?.categories.join(', ') }}</p>
-      <div class="preview-text" [innerHTML]="previewData?.textContent"></div>
-      <div class="preview-files" *ngIf="previewData?.files?.length">
-        <p>Files:</p>
-        <ul>
-          <li *ngFor="let file of previewData.files">
-            {{ file.name }}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <ng-template #previewTemplate>
+    <mat-card class="preview-card">
+      <mat-card-header>
+        <mat-card-title>{{ previewData.title || 'No Title' }}</mat-card-title>
+        <mat-card-subtitle>
+          Categories: {{ previewData.categories.length > 0 ? previewData.categories.join(', ') : 'None' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="preview-content">
+        <!-- Quill Content (Properly Sanitized) -->
+        <div class="quill-content" *ngIf="previewData.textContent" [innerHTML]="previewData.textContent | safeHtml"></div>
+
+        <!-- Attached Files (Images/Videos) -->
+        <div *ngIf="previewData.files.length > 0">
+          <h3>Attached Files:</h3>
+          <ul class="file-preview-list">
+            <li *ngFor="let file of previewData.files" class="file-preview-item">
+              <ng-container *ngIf="isImage(file.name); else videoBlock">
+                <img [src]="getFileUrl(file)" alt="Uploaded Image" class="preview-image"/>
+              </ng-container>
+              <ng-template #videoBlock>
+                <video controls class="preview-video">
+                  <source [src]="getFileUrl(file)" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </ng-template>
+            </li>
+          </ul>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button (click)="exitPreview()">Edit</button>
+        <button mat-raised-button color="primary" (click)="onUpload()">Upload</button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-template>
 </div>
