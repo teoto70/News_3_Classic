@@ -1,33 +1,28 @@
-import { Component, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { Firestore, doc, getDoc } from "@angular/fire/firestore";
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "app-led-display",
+  selector: 'app-led-display',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: "./led-display.component.html",
-  styleUrls: ["./led-display.component.css"],
+  templateUrl: './led-display.component.html',
+  styleUrls: ['./led-display.component.css']
 })
-export class LedDisplayComponent implements OnInit {
-  text = "Welcome to the LED Display!";
+export class LedDisplayComponent {
+  category: string = 'Новини';
+  partnerImage: string = 'images/partnerlogo.png';
 
-  constructor(private firestore: Firestore) {}
-
-  async ngOnInit() {
-    try {
-      const docRef = doc(this.firestore, "led", "ledtext");
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        // Cast the returned data to an object with a "text" property
-        const data = docSnap.data() as { text: string };
-        this.text = data.text;
-      } else {
-        console.error("No such document in the 'led' collection with ID 'Ledtext'.");
-      }
-    } catch (error) {
-      console.error("Error fetching LED text:", error);
+  // Each ticker item includes text and a link URL
+  tickerItems = [
+    {
+      text: 'Най-доброто от Йордания - 5 нощувки, с полет от София на Aegean Airlines!- Цени от 2099 лв. за ранни записвания!',
+      link: 'https://bit.ly/4aQpqcr'
+    },
+    // You can include more items
+    {
+      text: 'Още една страхотна оферта за пътуване!',
+      link: 'https://example.com'
     }
-  }
+    // etc.
+  ];
 }

@@ -7,11 +7,12 @@
 */
 :host {
     display: block;
-    margin-top: 50px;
-    max-height: 90vh;
+    margin-top: 55px;
+    max-height: 95vh;
     overflow-y: auto;
     padding: 10px;
     box-sizing: border-box;
+    border-radius: 0 !important;
   }
   
   /* 
@@ -48,3 +49,54 @@
     max-width: 100%;
     width: 810.188px;
   }
+/* Container styling */
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;       /* Wrap items if necessary */
+  align-items: center;
+  gap: 10px;             /* Space between items */
+  padding: 10px;
+  background-color: #f5f5f5; /* Light background for contrast */
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Style for the spans (likes, views, created-at) */
+.detail-meta span {
+  margin-right: 10px;
+}
+
+/* Button styling */
+.detail-meta .like {
+  width: 24px;      /* adjust size as needed */
+  height: 24px;     /* ensure the height matches */
+  background-image: url('/images/heart-shape-silhouette.png');
+  background-size: cover; /* or contain, depending on your needs */
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+}
+
+.detail-meta .like:hover {
+  transform: scale(1.1);
+}
+
+/* Social share link styling */
+.detail-meta .socialshare {
+  display: inline-block;
+  margin-right: 10px;
+  text-decoration: none;
+}
+
+/* Social share image styling */
+.detail-meta .socialshare img {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s;
+}
+
+.detail-meta .socialshare img:hover {
+  transform: scale(1.1);
+}

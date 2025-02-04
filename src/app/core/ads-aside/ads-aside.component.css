@@ -9,79 +9,63 @@
     border-right: none;
     height: 100%;
     right: 0;
-}
-
-.ad-placeholder {
+  }
+  
+  .ad-placeholder {
     margin-top: 20px;
     background-color: #004e8900;
-    padding:5px;
+    padding: 5px;
     border-radius: 10px;
     height: 300px;
     display: flex;
     flex-direction: column;
-}
-
-/* New styles for the random post thumbnail */
-.random-post {
+  }
+  
+  .random-post {
     display: flex;
     align-items: center;
-    background-color: #fff;
+    background-color: #ffffff00;
     border-radius: 5px;
     overflow: hidden;
     margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   
     width: 100%;
     aspect-ratio: 1/1;
     height: auto;
-    
-}
-
-.thumbnail-image {
-    width: 100%;
-    aspect-ratio: 1/1;
-    height: auto;
-    object-fit: cover;
-}
-
-.thumbnail-title {
-    flex: 1;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-    z-index: 10000;
-}
-
-/* Ensure the "Check also:" text appears at the bottom */
-.check-also {
-    font-size: 16px;
-    color: #000000;
-    font-weight: bold;
-    z-index: 10000
-}
-.thumbnail-wrapper {
-    position: relative;    /* so we can absolutely position the text inside */
-    display: inline-block; /* or block, depending on your layout */
   }
   
-  /* The image can be styled as needed. E.g.: */
+  /* Remove absolute positioning so it stays in the normal flow */
+  .thumbnail-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
   .thumbnail-image {
     display: block;
-    width: 100%;       /* or a set width, if you prefer */
+    width: 100%;
     height: auto;
+    object-fit: cover;
   }
   
-  /* Overlay text */
   .post-name-overlay {
     position: absolute;
-    top: 0;            /* or another position if you prefer (e.g., bottom: 0) */
-    left: 0;
-    color: #fff;       /* white text over a dark background */
-    background: rgba(0, 0, 0, 0.6); /* semi-transparent dark overlay */
-    padding: 8px;      /* spacing around the text */
-    box-sizing: border-box;
-    /* Optionally, set width: 100% if you want the background to span the image width */
-    width: 100%;
-    text-align: center; /* center the text horizontally */
+    top: 50px;
+    left: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 4px;
+    margin-top: 5px;
+  }
+  
+  /* "Check also:" text styling */
+  .check-also {
+    font-size: 16px;
+    color: #000;
+    font-weight: bold;
+    z-index: 10000;
+    margin-top: 10px;
   }
   

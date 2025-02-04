@@ -6,6 +6,9 @@ import { SafeHtmlPipe } from '../../pipes/safehtml.pipe'; // adjust path as need
 import { Post } from '../../services/post.service'; // adjust path if needed
 import { doc, updateDoc, increment, getDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
+import { shareIcons } from 'ngx-sharebuttons/icons';
+import { provideShareButtonsOptions } from 'ngx-sharebuttons';
+
 
 interface Comment {
   name: string;
@@ -21,7 +24,8 @@ interface Comment {
     CommonModule,
     FormsModule,
     MatDialogModule,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    // provideShareButtonsOptions
   ]
 })
 export class PostDetailComponent implements OnInit {

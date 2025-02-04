@@ -1,46 +1,75 @@
-.led-marquee {
-  width: 100vw;
-  overflow: hidden;
-  white-space: nowrap;
-  height: 50px;
-  position: fixed;
-  top: 0; /* Ensure it's at the very top */
-  left: 0; /* Align to the left */
-  transform: none; /* Remove unnecessary translation */
-  z-index: 10000999;
-  text-align: center;
-  border: 0px solid #000000;
-  background-color: white;
+/* Position the entire LED display fixed at the top */
+.led-display-container {
+  position: fixed;  /* Fixed positioning so it stays at the top */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;    /* Adjust z-index as needed */
+  background-color: #fffbfb; /* Optional: background color for the ticker */
+  padding: 5px 10px;      /* Optional: add some padding */
   display: flex;
+  align-items: center;
+  border-bottom: 1px solid #000000; /* Optional: add a border */
+  border-top: 1px solid #000000; /* Optional: add a border */
+  border-left: 1px solid #000000; /* Optional: add a border */
+  border-right: 1px solid #000000; /* Optional: add a border */
+  height: 50px;
 }
-  
-  
-  .led-text {
-    position: absolute;
-    white-space: nowrap;
-    font-size: 1.5em;
-    animation: slideLeft 30s linear infinite;
-  }
-  
-  .led-text span {
-    font-size: 24px;
-    font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
-    color: red;
-    padding-top: 5px;
-   
-  }
-  .led-text:hover {
-    animation-play-state: paused;
-  }
-  
-  @keyframes slideLeft {  
-    0% {
-      transform: translateX(-100vw);
-    }
-    100% {
-      transform: translateX(100vw);
-    }
-  }
 
-  
+/* Category label (you can adjust styling as needed) */
+.catname2 {
+  padding: 5px;
+  text-transform: uppercase;
+  text-align: left;
+  display: inline-block;
+  color: rgb(255, 0, 0); /* LED-style green text */
+}
+
+/* Partner image remains the same */
+.img-fluid {
+  margin-left: 1rem;
+  margin-right: 0.5rem;
+  width: 70px;
+}
+
+/* Ticker container: takes up remaining horizontal space */
+.ticker-container {
+  flex: 1; /* Fills the available space */
+  overflow: hidden;
+}
+
+/* Ticker content: scrolls continuously */
+.ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: ticker 20s linear infinite;
+  font-size: 1.1em;
+  color: rgb(255, 0, 0); /* LED green text */
+}
+.ticker-container:hover .ticker-content,
+.ticker-content:hover {
+  animation-play-state: paused;
+}
+
+/* Keyframes for ticker animation */
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Optional: styling for icons and links in the ticker */
+.ticker-content i {
+  margin-left: 2rem;
+  margin-right: 0.5rem;
+}
+
+.ticker-content a {
+  text-decoration: none;
+  color: inherit;
+  margin-right: 2rem;
+}

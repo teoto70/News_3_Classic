@@ -14,25 +14,28 @@
              (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
     </div>
-<!-- "Check also:" text -->
-        <div class="check-also">Check also:</div>
-    <!-- Post Placeholder -->
-    <div class="ad-placeholder">
-        <!-- Random post thumbnail -->
-        <div class="random-post" *ngIf="randomPost">
-          <!-- Wrapper with position: relative -->
-          <div class="thumbnail-wrapper">
-            <img
-              class="thumbnail-image"
-              [src]="randomPost.thumbnailUrl"
-              [alt]="randomPost.title"
-            />
-            <div class="post-name-overlay">
-              {{ randomPost.title }}
-            </div>
-          </div>
-        </div>
-      </div>
+
+
+    
+ <!-- "Check also:" text -->
+ <div class="check-also">Check also:</div>
+ <!-- Post Placeholder -->
+ <div class="ad-placeholder">
+   <!-- Random post thumbnail -->
+   <div class="random-post" *ngIf="randomPost">
+     <!-- Wrapper with position: relative -->
+     <div class="thumbnail-wrapper">
+       <img
+         class="thumbnail-image"
+         [src]="randomPost.thumbnailUrl"
+         [alt]="randomPost.title"
+       />
+       <div class="post-name-overlay">
+         {{ randomPost.title }}
+       </div>
+     </div>
+   </div>
+ </div>
       
         
         
