@@ -1,4 +1,5 @@
 export interface Post {
+  docId?: string;  // <-- Add this line
   id: string;
   title: string;
   content?: string;     // <-- changed to optional

@@ -49,6 +49,7 @@
     font-size: 14px;
     font-weight: bold;
     color: #333;
+    z-index: 10000;
 }
 
 /* Ensure the "Check also:" text appears at the bottom */
@@ -58,3 +59,29 @@
     font-weight: bold;
     z-index: 10000
 }
+.thumbnail-wrapper {
+    position: relative;    /* so we can absolutely position the text inside */
+    display: inline-block; /* or block, depending on your layout */
+  }
+  
+  /* The image can be styled as needed. E.g.: */
+  .thumbnail-image {
+    display: block;
+    width: 100%;       /* or a set width, if you prefer */
+    height: auto;
+  }
+  
+  /* Overlay text */
+  .post-name-overlay {
+    position: absolute;
+    top: 0;            /* or another position if you prefer (e.g., bottom: 0) */
+    left: 0;
+    color: #fff;       /* white text over a dark background */
+    background: rgba(0, 0, 0, 0.6); /* semi-transparent dark overlay */
+    padding: 8px;      /* spacing around the text */
+    box-sizing: border-box;
+    /* Optionally, set width: 100% if you want the background to span the image width */
+    width: 100%;
+    text-align: center; /* center the text horizontally */
+  }
+  

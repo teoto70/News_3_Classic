@@ -10,9 +10,19 @@
         {{ post?.createdAt?.toDate() | date:'medium' }} 
     
   </span>
-  
+  <button (click)="onLikeClick()">Like</button>
+
   <!-- Placeholder for share button -->
-  <button (click)="onShare()">Share</button>
+  <!-- Social icons with links -->
+  <a href="#" (click)="shareFacebook($event)">
+    <img src="/assets/icons/facebook.png" alt="Facebook" />
+  </a>
+  <a href="#" (click)="shareTwitter($event)">
+    <img src="/assets/icons/twitter.png" alt="Twitter" />
+  </a>
+  <a href="#" (click)="shareLinkedIn($event)">
+    <img src="/assets/icons/linkedin.png" alt="LinkedIn" />
+  </a>
 </div>
 
 <!-- If content could be undefined, fallback to '' -->

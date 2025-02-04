@@ -20,14 +20,20 @@
     <div class="ad-placeholder">
         <!-- Random post thumbnail -->
         <div class="random-post" *ngIf="randomPost">
-          <img
-            class="thumbnail-image"
-            [src]="randomPost.thumbnailUrl"
-            [alt]="randomPost.title"
-          />
-
+          <!-- Wrapper with position: relative -->
+          <div class="thumbnail-wrapper">
+            <img
+              class="thumbnail-image"
+              [src]="randomPost.thumbnailUrl"
+              [alt]="randomPost.title"
+            />
+            <div class="post-name-overlay">
+              {{ randomPost.title }}
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
+      
         
         
     <!-- Google Ads Placeholder -->

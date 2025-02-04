@@ -4,6 +4,7 @@ import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 export interface Post {
+  docId?: string;  // <-- Add this line
   id: string;
   title: string;
   content: string;

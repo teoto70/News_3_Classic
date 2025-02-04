@@ -24,4 +24,5 @@ export class PostsService {
     const postsSnapshot = await getDocs(q);
     return postsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
+  
 }
