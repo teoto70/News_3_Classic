@@ -1,0 +1,50 @@
+/* 
+  The main container style
+  -- margin-top: 50px
+  -- max-height: 90vh
+  -- enable scrolling
+  -- padding: 10px for overall text area
+*/
+:host {
+    display: block;
+    margin-top: 50px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  /* 
+    Target images inside .detail-content, 
+    which Quill might output as <p><img ...></p>
+  */
+  .detail-content img {
+    max-width: 100%;        /* never exceed container width */
+    display: block;         /* make them block-level for centering */
+    margin: 10px auto;      /* center horizontally + spacing */
+    padding: 10px;          /* internal padding around the image */
+    box-sizing: border-box; /* so padding doesn't force overflow */
+  }
+  :host ::ng-deep .detail-content p > img,
+  :host ::ng-deep .detail-content div > img {
+    /* same block settings */
+    max-width: 100%;        /* never exceed container width */
+    display: block;         /* make them block-level for centering */
+    margin: 10px auto;      /* center horizontally + spacing */
+    padding: 10px;          /* internal padding around the image */
+    box-sizing: border-box; /* so padding doesn't force overflow */
+  }
+  :host ::ng-deep .detail-content img {
+    display: block !important;
+    margin: 10px auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  .centered-image {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    width: 810.188px;
+  }
