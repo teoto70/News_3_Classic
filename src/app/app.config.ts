@@ -8,6 +8,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment'; 
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { QuillModule } from 'ngx-quill'; // ✅ Import Quill
+import { MatDialogModule } from '@angular/material/dialog';
 
 export const appConfig: ApplicationConfig = {
   providers: [

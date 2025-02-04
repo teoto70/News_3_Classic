@@ -36,7 +36,7 @@ import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    SafeUrlPipe
+    
   ],
   templateUrl: './upload-post.component.html',
   styleUrls: ['./upload-post.component.css']

@@ -1,0 +1,53 @@
+<h1>{{ post?.title }}</h1>
+
+<div class="detail-meta">
+  <span class="likes">Likes: {{ post?.likes || 0 }}</span>
+  <span class="views">Views: {{ post?.views || 0 }}</span>
+  <span class="created-at">
+    <!-- If createdAt is a number, convert it to a Date first -->
+    Created at: 
+   
+        {{ post?.createdAt?.toDate() | date:'medium' }} 
+    
+  </span>
+  
+  <!-- Placeholder for share button -->
+  <button (click)="onShare()">Share</button>
+</div>
+
+<!-- If content could be undefined, fallback to '' -->
+<div class="detail-content" [innerHTML]="(post?.content || '') | safeHtml"></div>
+
+<!-- Images carousel or listing -->
+<div *ngFor="let image of post?.images ?? []">
+  <img [src]="image" alt="" />
+</div>
+
+<!-- Right side comments (layout depends on your CSS) -->
+<div class="comments-section">
+  <h2>Comments</h2>
+
+  <!-- Comment list -->
+  <div class="comment-item" *ngFor="let comment of comments">
+    <h4>{{ comment.name }}</h4>
+    <p>{{ comment.message }}</p>
+  </div>
+
+  <!-- Comment form -->
+  <div class="comment-form">
+    <input 
+      type="text" 
+      placeholder="Your Name" 
+      [(ngModel)]="commentName" />
+    <textarea 
+      placeholder="Your Comment" 
+      [(ngModel)]="commentMessage">
+    </textarea>
+    <button (click)="addComment()">Add Comment</button>
+  </div>
+</div>
+
+<!-- Close dialog -->
+<div class="dialog-actions">
+  <button (click)="onClose()">Close</button>
+</div>

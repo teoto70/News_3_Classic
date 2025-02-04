@@ -5,20 +5,26 @@
   </div>
 
   <!-- No Data Found -->
-  <div *ngIf="!isLoading && categories.length === 0" class="no-data">
+  <div *ngIf="!isLoading && groupedCategories.length === 0" class="no-data">
     No posts found.
   </div>
 
   <!-- Posts Display -->
-  <ng-container *ngIf="!isLoading && categories.length > 0">
-    <div *ngFor="let group of categories; trackBy: trackById" class="category-group">
+  <ng-container *ngIf="!isLoading && groupedCategories.length > 0">
+    <div *ngFor="let group of groupedCategories; trackBy: trackByTag" class="category-group">
       <h2>{{ group.tag }}</h2>
       <div class="grid-container">
-        <div *ngFor="let post of group.posts; trackBy: trackById" class="grid-item">
-          <img [src]="post.thumbnailUrl"
-               alt="{{ post.title }}"
-               loading="lazy"
-               class="thumbnail">
+        <div 
+          *ngFor="let post of group.posts; trackBy: trackById" 
+          class="grid-item"
+          (click)="openDetailDialog(post)">
+          
+          <img 
+            [src]="post.thumbnailUrl" 
+            alt="{{ post.title }}"
+            loading="lazy" 
+            class="thumbnail">
+
           <div class="post-name">{{ post.title }}</div>
         </div>
       </div>

@@ -1,11 +1,12 @@
 export interface Post {
-    uid: string;
-    username: string;
-    pfp: string;
-    likesCount: number;
-    comments: [];
-    img: string;
-    caption: string;
-    createdAt: number;
-    theme: string;
+  id: string;
+  title: string;
+  content?: string;     // <-- changed to optional
+  categories: string[];
+  images?: string[];    // <-- changed to optional
+  videos?: string[];
+  createdAt: any;
+  views: number;
+  likes: number;
+  thumbnailUrl?: string;
 }

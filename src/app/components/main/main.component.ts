@@ -1,127 +1,139 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnChanges, OnInit, Input, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PostService } from '../../services/post.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PostService, Post } from '../../services/post.service';
+import { PostDetailComponent } from '../post-detail/post-detail.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MatDialogModule,  // ensure MatDialogModule is imported if you're using MatDialog
+  ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnChanges {
-  // Receive the selected category from the parent.
+export class MainComponent implements OnInit, OnChanges {
   @Input() selectedCategory: string = 'All';
 
-  // Use a single property to store either grouped categories (for "All")
-  // or a single group of posts (for a specific category).
-  categories: any[] = [];
+  // This will hold the grouped posts (like your original "categories" array).
+  groupedCategories: Array<{ tag: string; posts: Post[] }> = [];
 
   isLoading = false;
-  currentPage = 1;
+  allPosts: Post[] = [];
 
-  constructor(private http: HttpClient, private postService: PostService) {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    // When the selected category changes, reset and re-fetch posts.
-    if (changes['selectedCategory']) {
-      this.currentPage = 1;
-      this.categories = [];
-      this.fetchNews();
-    }
-  }
+  constructor(
+    private postService: PostService,
+    private dialog: MatDialog
+  ) {}
 
   /**
-   * Fetch posts from the API.
-   * Each post is assigned a category (skipping "All").
-   * If selectedCategory is "All", group posts by category.
-   * Otherwise, filter posts to include only those matching the selected category.
+   * OnInit: Load posts once, then subscribe to them via posts$.
    */
-  fetchNews(): void {
-    if (this.isLoading) {
-      return;
-    }
+  ngOnInit(): void {
     this.isLoading = true;
-    const apiUrl = `https://jsonplaceholder.typicode.com/photos?_page=${this.currentPage}&_limit=24`;
 
-    this.http.get<any[]>(apiUrl).subscribe({
-      next: (data) => {
-        // Assign a category to each post.
-        // Since categoriesList in the header includes "All" at index 0,
-        // we use the remaining items for assignment.
-        const actualCategories = ['News', 'Sports', 'Tech', 'Business', 'Contact'];
-        data.forEach(post => {
-          post.category = actualCategories[(post.id - 1) % actualCategories.length];
+    // 1) Trigger the service to fetch from Firestore and emit to posts$
+    this.postService.loadPosts();
+
+    // 2) Subscribe to posts$ to get the updated list of posts
+    this.postService.posts$.subscribe({
+      next: (posts) => {
+        this.isLoading = false;
+        this.allPosts = [...posts]; // copy to local array
+
+        // Add a 'thumbnailUrl' for each post, randomly picking from images[]
+        this.allPosts.forEach(post => {
+          if (post.images && post.images.length > 0) {
+            const randomIndex = Math.floor(Math.random() * post.images.length);
+            post.thumbnailUrl = post.images[randomIndex];
+          } else {
+            post.thumbnailUrl = '/assets/placeholder.jpg';
+          }
         });
 
-        if (this.selectedCategory === 'All') {
-          // Group posts by category.
-          this.categories = this.groupByCategory(data);
-        } else {
-          // Filter posts for the selected category and wrap in a single group.
-          const filtered = data.filter(post => post.category === this.selectedCategory);
-          this.categories = [{
-            tag: this.selectedCategory,
-            posts: filtered
-          }];
-        }
-
-        // Store the fetched posts in the PostService
-        this.postService.setPosts(data);
-
-        this.isLoading = false;
-        this.currentPage++;
+        // Now apply the category filter/group
+        this.applyCategoryFilter();
       },
-      error: (error) => {
-        console.error('Error fetching data:', error);
+      error: (err) => {
         this.isLoading = false;
+        console.error('Error fetching posts:', err);
       }
     });
   }
 
   /**
-   * Groups an array of posts by their category.
-   * Ensures every category appears (even if empty) and pads each group to 8 posts.
+   * OnChanges: Re-group or re-filter whenever the @Input() selectedCategory changes.
+   * (This assumes we don't want to re-fetch from Firestore every time.)
    */
-  groupByCategory(posts: any[]): any[] {
-    // Define the actual categories (excluding "All").
-    const actualCategories = ['News', 'Sports', 'Tech', 'Business', 'Contact'];
-    const categoriesMap = new Map<string, any[]>();
-    actualCategories.forEach(cat => categoriesMap.set(cat, []));
-
-    // Place posts into the correct category group.
-    posts.forEach(post => {
-      const category = post.category;
-      if (categoriesMap.has(category)) {
-        categoriesMap.get(category)!.push(post);
-      } else {
-        categoriesMap.set(category, [post]);
-      }
-    });
-
-    // Ensure each group has exactly 8 posts.
-    const grouped = Array.from(categoriesMap.entries()).map(([tag, posts]) => {
-      if (posts.length < 8) {
-        while (posts.length < 8) {
-          posts.push({
-            id: posts.length + 1,
-            title: `Mock Post ${posts.length + 1}`,
-            thumbnailUrl: `https://via.placeholder.com/150?text=Mock+Post+${posts.length + 1}`,
-            category: tag
-          });
-        }
-      } else if (posts.length > 8) {
-        posts = posts.slice(0, 8);
-      }
-      return { tag, posts };
-    });
-
-    return grouped;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCategory'] && !changes['selectedCategory'].isFirstChange()) {
+      this.applyCategoryFilter();
+    }
   }
 
-  // Optionally, a trackBy function to optimize ngFor rendering.
-  trackById(index: number, item: any): any {
-    return item.tag || item.id;
+  /**
+   * Filter or group posts according to the selectedCategory.
+   */
+  private applyCategoryFilter(): void {
+    if (this.allPosts.length === 0) {
+      this.groupedCategories = [];
+      return;
+    }
+
+    if (this.selectedCategory === 'All') {
+      this.groupedCategories = this.groupByCategory(this.allPosts);
+    } else {
+      const filtered = this.allPosts.filter(p =>
+        p.categories.includes(this.selectedCategory)
+      );
+      this.groupedCategories = [{
+        tag: this.selectedCategory,
+        posts: filtered
+      }];
+    }
+  }
+
+  /**
+   * Group posts by each category they belong to.
+   * If a post can have multiple categories, it appears in multiple groups.
+   */
+  private groupByCategory(posts: Post[]): Array<{ tag: string; posts: Post[] }> {
+    const catMap: Map<string, Post[]> = new Map();
+
+    posts.forEach(post => {
+      post.categories.forEach(cat => {
+        if (!catMap.has(cat)) {
+          catMap.set(cat, []);
+        }
+        catMap.get(cat)!.push(post);
+      });
+    });
+
+    // Convert catMap to an array of objects with { tag, posts }
+    const result: Array<{ tag: string; posts: Post[] }> = [];
+    for (const [tag, psts] of catMap.entries()) {
+      result.push({ tag, posts: psts });
+    }
+    return result;
+  }
+
+  // TrackBy functions for performance in *ngFor
+  trackById(index: number, item: Post) {
+    return item.id;
+  }
+
+  trackByTag(index: number, group: { tag: string; posts: Post[] }) {
+    return group.tag;
+  }
+
+  openDetailDialog(post: Post): void {
+    this.dialog.open(PostDetailComponent, {
+      width: '80vw',
+      maxWidth: '1000px',
+      data: { post },
+      panelClass: 'post-detail-dialog'
+    });
   }
 }
