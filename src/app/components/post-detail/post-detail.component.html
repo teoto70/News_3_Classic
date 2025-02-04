@@ -33,29 +33,6 @@
   <img class="centered-image"[src]="image" alt="" />
 </div>
 
-<!-- Right side comments (layout depends on your CSS) -->
-<div class="comments-section">
-  <h2>Comments</h2>
-
-  <!-- Comment list -->
-  <div class="comment-item" *ngFor="let comment of comments">
-    <h4>{{ comment.name }}</h4>
-    <p>{{ comment.message }}</p>
-  </div>
-
-  <!-- Comment form -->
-  <div class="comment-form">
-    <input 
-      type="text" 
-      placeholder="Your Name" 
-      [(ngModel)]="commentName" />
-    <textarea 
-      placeholder="Your Comment" 
-      [(ngModel)]="commentMessage">
-    </textarea>
-    <button (click)="addComment()">Add Comment</button>
-  </div>
-</div>
 
 <!-- Close dialog -->
 <div class="dialog-actions">

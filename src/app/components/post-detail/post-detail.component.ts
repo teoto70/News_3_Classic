@@ -30,9 +30,9 @@ export class PostDetailComponent implements OnInit {
   post: Post | null = null;
 
   // For comments
-  comments: Comment[] = [];
-  commentName = '';
-  commentMessage = '';
+  //comments: Comment[] = [];
+  //commentName = '';
+  //commentMessage = '';//
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { post: Post },
@@ -56,15 +56,15 @@ export class PostDetailComponent implements OnInit {
     alert('Sharing post...');
   }
 
-  addComment(): void {
-    if (!this.commentName.trim() || !this.commentMessage.trim()) return;
-    this.comments.push({
-      name: this.commentName.trim(),
-      message: this.commentMessage.trim()
-    });
-    this.commentName = '';
-    this.commentMessage = '';
-  }
+ //addComment(): void {
+   // if (!this.commentName.trim() || !this.commentMessage.trim()) return;
+   // this.comments.push({
+   //   name: this.commentName.trim(),
+   //   message: this.commentMessage.trim()
+   // });
+   // this.commentName = '';
+   // this.commentMessage = '';
+ // }
 
   // ----------------------------
   // 1) VIEWS
