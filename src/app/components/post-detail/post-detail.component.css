@@ -5,12 +5,12 @@
 
 :host {
   display: block;
-  margin-top: 0px;
+  margin-top: 51px;
   max-height: 90vh;
   overflow-y: auto;
   padding: 10px;
   box-sizing: border-box;
-  margin-bottom: 40px;
+  margin-bottom: 70px;
   border-radius: 0 !important;
   /* Ensure the entire dialog scrolls on smaller screens */
 }
