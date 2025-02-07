@@ -56,7 +56,9 @@
 
 /* Pause scrolling on hover */
 .ticker-container:hover .ticker-content,
-.ticker-content:hover {
+.ticker-content:hover,
+.ticker-container:active .ticker-content,
+.ticker-content:active {
   animation-play-state: paused;
 }
 
