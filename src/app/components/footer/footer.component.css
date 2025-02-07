@@ -1,4 +1,4 @@
-.footer {
+
   .footer {
     position: fixed;
     bottom: 0;
@@ -14,7 +14,7 @@
     z-index: 9999; /* ensure it's not overlapped */
   }
    
-  }
+  
   p.footer-1 {
     color:rgb(255, 255, 255) !important;
     font-size: 15px;
@@ -24,7 +24,7 @@
   .container {
     background:rgb(189, 26, 26) !important;
     flex: 1;
-    display: flex;
+    display: fixed;
     height: 70px;
     flex-direction: column;
     margin-top: 15px;

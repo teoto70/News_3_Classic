@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PostService, Post } from '../../services/post.service';
 import { PostDetailComponent } from '../post-detail/post-detail.component';
-// If needed, import Firestore Timestamp to illustrate usage
-// import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-main',
