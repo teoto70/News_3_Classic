@@ -1,12 +1,22 @@
+<!-- 
+  NOTE: In Angular, this HTML would typically be in your-component.html.
+  Make sure to remove any inline styles that conflict with your CSS
+  so the responsive rules can work correctly (for example, we removed
+  the inline width="35px" in the <img>).
+-->
+
 <div class="led-display-container d-flex align-items-center mb-3">
   <!-- Category label -->
   <span class="catname2 p-2 text-uppercase text-left d-inline-block">
     {{ category }}
   </span>
 
-  <!-- Partner image; the [src] will be updated with the URL from Firebase Storage -->
-  <img class="img-fluid ml-3 mr-2" [src]="partnerImage" alt="Partner Image" style="width: 35px;">
-
+  <!-- Partner image -->
+  <img
+    class="img-fluid ml-3 mr-2"
+    [src]="partnerImage"
+    alt="Partner Image"
+  />
 
   <!-- Ticker area -->
   <div class="ticker-container p-2" style="background: none;">

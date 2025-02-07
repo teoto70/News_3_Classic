@@ -11,20 +11,23 @@
 
   <!-- Posts Display -->
   <ng-container *ngIf="!isLoading && groupedCategories.length > 0">
-    <div *ngFor="let group of groupedCategories; trackBy: trackByTag" class="category-group">
+    <div
+      *ngFor="let group of groupedCategories; trackBy: trackByTag"
+      class="category-group"
+    >
       <h2>{{ group.tag }}</h2>
       <div class="grid-container">
-        <div 
-          *ngFor="let post of group.posts; trackBy: trackById" 
+        <div
+          *ngFor="let post of group.posts; trackBy: trackById"
           class="grid-item"
-          (click)="openDetailDialog(post)">
-          
-          <img 
-            [src]="post.thumbnailUrl" 
-            alt="{{ post.title }}"
-            loading="lazy" 
-            class="thumbnail">
-
+          (click)="openDetailDialog(post)"
+        >
+          <img
+            [src]="post.thumbnailUrl"
+            [alt]="post.title"
+            loading="lazy"
+            class="thumbnail"
+          />
           <div class="post-name">{{ post.title }}</div>
         </div>
       </div>

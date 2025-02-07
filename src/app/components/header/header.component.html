@@ -1,23 +1,36 @@
-<!-- Fixed Header -->
-<header class="w-full bg-white shadow-md fixed top-[50px] left-0 right-0 z-50">
-  <div class="container mx-auto flex justify-between items-center p-4">
-    
-    <!-- Logo (Left Aligned) -->
-    <div class="logo-container text-xl font-bold text-blue-600 flex items-center" >
-      <a routerLink="/" class="flex items-center">
-        <img src="/images/logo.png" alt="TripNews Logo" style="width: 200px;" />
+<header class="header">
+  <div class="header-container">
+
+    <!-- Logo -->
+    <div class="logo-container">
+      <a routerLink="/">
+        <img src="/images/logo.png" alt="TripNews Logo" />
       </a>
     </div>
-    <!-- Navigation Menu -->
-    <nav>
-      <ul class="flex space-x-4">
+
+    <!-- Hamburger Icon (Visible on Mobile) -->
+    <button 
+      class="hamburger"
+      (click)="toggleMenu()"
+      aria-label="Toggle Navigation"
+    >
+      <!-- Simple Hamburger Icon (3 bars). Use any icon you like -->
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <!-- Navigation -->
+    <!-- We bind the class "nav-open" when isMenuOpen == true -->
+    <nav [class.nav-open]="isMenuOpen" class="nav">
+      <ul>
         <li *ngFor="let category of categoriesList">
           <a (click)="onSelect(category)">{{ category }}</a>
         </li>
       </ul>
     </nav>
 
-    <!-- ✅ User Buttons (Only Visible If Logged In) -->
+    <!-- (Optional) User Section -->
     <div *ngIf="isLoggedIn" class="user">
       <button routerLink="/upload" class="createBtn">Create Post</button>
       <button (click)="logout()" class="logoutBtn">Logout</button>

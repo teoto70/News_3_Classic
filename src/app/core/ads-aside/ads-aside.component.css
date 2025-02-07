@@ -1,67 +1,65 @@
 .right-sidebar {
-    width: 18%;
-    padding: 5px;
-    position: absolute;
-    top: 145px;
-    margin-left: 75%;
-    border: 1px solid #221f1f00;
-    border-top: none;
-    border-right: none;
-    height: 100%;
-    right: 0;
-  }
-  
-  .ad-placeholder {
-    margin-top: 20px;
-    background-color: #004e8900;
-    padding: 5px;
-    border-radius: 10px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-  }
-  
+  width: 18%;
+  padding: 5px;
+  position: absolute;
+  top: 145px;
+  /* If your main content is only 75% wide, margin-left: 75% places the sidebar to the right. */
+  margin-left: 75%;
+  border: 1px solid #221f1f00;
+  border-top: none;
+  border-right: none;
+  height: 100%;
+  right: 0;
+}
 
-    .random-post {
-      width: 100%;
-      aspect-ratio: 1/1;
-      position: relative; /* Make sure the container is relative so the overlay is positioned correctly */
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-  
-  /* Remove absolute positioning so it stays in the normal flow */
-  .thumbnail-wrapper {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .thumbnail-image {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: fit;
-  }
-  
-  .post-name-overlay {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-    border-radius: 4px;
-    margin-top: 5px;
-  }
-  
-  /* "Check also:" text styling */
-  .check-also {
-    font-size: 16px;
-    color: #000;
-    font-weight: bold;
-    z-index: 10000;
-    margin-top: 10px;
-  }
-  
+.ad-placeholder {
+  margin-top: 20px;
+  background-color: #004e8900;
+  padding: 5px;
+  border-radius: 10px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.random-post {
+  width: 100%;
+  aspect-ratio: 1/1;
+  position: relative; /* For overlay positioning */
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.thumbnail-wrapper {
+  position: relative; /* Keep for the overlay */
+  display: inline-block;
+}
+
+.thumbnail-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* or "contain" if you prefer */
+}
+
+.post-name-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 4px;
+  margin-top: 5px;
+  font-size: clamp(10px, 2vw, 16px);
+}
+
+.check-also {
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+  margin-top: 10px;
+  z-index: 10000;
+}

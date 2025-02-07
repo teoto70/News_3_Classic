@@ -1,40 +1,46 @@
-/* Position the entire LED display fixed at the top */
+/* =============================== */
+/*      Base Styles (Mobile)      */
+/* =============================== */
+
+/* Position the entire LED display at the top, fixed */
 .led-display-container {
-  position: fixed;  /* Fixed positioning so it stays at the top */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 9999;    /* Adjust z-index as needed */
-  background-color: #fffbfb; /* Optional: background color for the ticker */
-  padding: 0px 10px;      /* Optional: add some padding */
+  z-index: 9999;
+  background-color: #fffbfb; 
+  padding: 0px 10px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #000000; /* Optional: add a border */
-  border-top: 0px solid #000000; /* Optional: add a border */
-  border-left: 1px solid #000000; /* Optional: add a border */
-  border-right: 1px solid #000000; /* Optional: add a border */
+  border-bottom: 1px solid #000000;
+  border-left: 1px solid #000000;
+  border-right: 1px solid #000000;
+  /* Height for mobile */
   height: 50px;
 }
 
-/* Category label (you can adjust styling as needed) */
+/* Category label */
 .catname2 {
   padding: 5px;
   text-transform: uppercase;
   text-align: left;
   display: inline-block;
-  color: rgb(255, 0, 0); /* LED-style green text */
+  color: rgb(255, 0, 0);
+  font-size: 16px;	
 }
 
-/* Partner image remains the same */
+/* Partner image */
 .img-fluid {
   margin-left: 1rem;
   margin-right: 0.5rem;
-  width: 70px;
+  /* Width for mobile */
+  width: 50px;
 }
 
-/* Ticker container: takes up remaining horizontal space */
+/* Ticker container: takes up remaining space */
 .ticker-container {
-  flex: 1; /* Fills the available space */
+  flex: 1;
   overflow: hidden;
 }
 
@@ -44,9 +50,11 @@
   white-space: nowrap;
   padding-left: 100%;
   animation: ticker 20s linear infinite;
-  font-size: 1.1em;
-  color: rgb(255, 0, 0); /* LED green text */
+  color: rgb(255, 0, 0);
+  font-size: 12px;
 }
+
+/* Pause scrolling on hover */
 .ticker-container:hover .ticker-content,
 .ticker-content:hover {
   animation-play-state: paused;
@@ -62,14 +70,55 @@
   }
 }
 
-/* Optional: styling for icons and links in the ticker */
+/* Optional: styling for icons and links */
 .ticker-content i {
   margin-left: 2rem;
   margin-right: 0.5rem;
 }
-
 .ticker-content a {
   text-decoration: none;
   color: inherit;
   margin-right: 2rem;
+}
+
+/* =============================== */
+/*      Tablet Styles (768–1023)  */
+/* =============================== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .led-display-container {
+    /* Slightly taller header on tablet */
+    height: 50px;
+    font-size: 14px;
+  }
+
+  .img-fluid {
+    /* Increase logo image size on tablet */
+    width: 50px;
+  }
+
+  .ticker-content {
+    /* Increase ticker font size */
+    font-size: 14px;
+  }
+}
+
+/* =============================== */
+/*     Desktop Styles (1024+)      */
+/* =============================== */
+@media (min-width: 1024px) {
+  .led-display-container {
+    /* Even taller on desktop */
+    height: 60px;
+    font-size: 16px;
+  }
+
+  .img-fluid {
+    /* Larger partner image on desktop */
+    width: 50px;
+  }
+
+  .ticker-content {
+    /* Larger text on desktop */
+    font-size: 16px;
+  }
 }

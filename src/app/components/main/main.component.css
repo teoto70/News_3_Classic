@@ -1,55 +1,84 @@
+/* ========================= */
+/*  Base (Mobile) Styles     */
+/* ========================= */
+
+/* Container offset from the header */
 .main-container {
-    margin-top: 120px;
-    margin-left: 5;
-    margin-right: 20%;
-    padding-bottom: 70px;
-  }
-  
-  .category {
-    margin-bottom: 40px;
-  }
-  
+  margin-top: 120px; /* leaves space for your header */
+  margin-left: 5px;  /* corrected from '5' to '5px' */
+  margin-right: 20%; /* you could keep 20% if you prefer, but here's a simpler approach */
+  padding-bottom: 70px;
+}
+
+/* If you want a different margin for bigger screens, you can add a media query for that. */
+
+/* Grid container: 2 columns on mobile */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* If you specifically want exactly 4 rows on mobile for "All" (8 posts),
+     you could do: grid-template-rows: repeat(4, auto);
+     But usually you'd let the rows flow automatically. */
+  gap: 10px;
+}
+
+/* Grid item (thumbnail + overlay text) */
+.grid-item {
+  position: relative;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.grid-item:hover {
+  transform: scale(1.02);
+}
+
+/* Post thumbnail */
+.thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* keeps images square if you want */
+  height: auto;
+  display: block;
+}
+
+/* Title overlay */
+.post-name {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Loading spinner / No data state styling */
+.loading-spinner, .no-data {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  color: #555;
+}
+
+/* ============================== */
+/*  Tablet & Desktop Styles       */
+/*  (768px and up => 4 columns)   */
+/* ============================== */
+@media (min-width: 768px) {
   .grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 3 columns */
-    gap: 10px; /* Space between grid items */
+    grid-template-columns: repeat(4, 1fr);
   }
-  
-  .grid-item {
-    position: relative;
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
+
+  /* If you want extra margin on wider screens, do it here */
+  .main-container {
+    margin-left: 5%;
+    margin-right: 20%;
   }
-  
-  .grid-item:hover {
-    transform: scale(1.02);
-  }
-  
-  .thumbnail {
-    width: 100%;
-    aspect-ratio: 1/1;
-    height: auto;
-    display: block;
-  }
-  
   .post-name {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: white;
     font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px;
-    border-radius: 4px;
   }
-  
-  .loading-spinner {
-    text-align: center;
-    padding: 20px;
-    font-size: 18px;
-    color: #555;
-  }
+}
