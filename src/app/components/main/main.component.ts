@@ -17,9 +17,7 @@ import { PostDetailComponent } from '../post-detail/post-detail.component';
 export class MainComponent implements OnInit, OnChanges {
   @Input() selectedCategory: string = 'All';
 
-  // This will hold the grouped posts (like your original "categories" array).
   groupedCategories: Array<{ tag: string; posts: Post[] }> = [];
-
   isLoading = false;
   allPosts: Post[] = [];
 
@@ -41,8 +39,6 @@ export class MainComponent implements OnInit, OnChanges {
     this.postService.posts$.subscribe({
       next: (posts) => {
         this.isLoading = false;
-
-        // Copy to local array
         this.allPosts = [...posts];
 
         // Add a 'thumbnailUrl' for each post, randomly picking from images[]
@@ -55,7 +51,7 @@ export class MainComponent implements OnInit, OnChanges {
           }
         });
 
-        // Now apply the category filter/group
+        // Apply the category filter/group
         this.applyCategoryFilter();
       },
       error: (err) => {
@@ -75,7 +71,9 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Filter or group posts according to the selectedCategory.
+   * Apply the filter/group logic:
+   * - If "All" => group by category, show 8 newest per category
+   * - Else => show all posts in the chosen category, sorted newest-first (no limit)
    */
   private applyCategoryFilter(): void {
     if (this.allPosts.length === 0) {
@@ -84,11 +82,24 @@ export class MainComponent implements OnInit, OnChanges {
     }
 
     if (this.selectedCategory === 'All') {
-      this.groupedCategories = this.groupByCategory(this.allPosts);
+      // Group all posts by category, limit each category to 8
+      this.groupedCategories = this.groupByCategory(this.allPosts, 8);
     } else {
-      const filtered = this.allPosts.filter(p =>
-        p.categories.includes(this.selectedCategory)
+      // Show only posts in the selected category (no limit),
+      // but sorted by newest first
+      const filtered = this.allPosts.filter(post =>
+        post.categories.includes(this.selectedCategory)
       );
+      // Sort by newest first
+      filtered.sort((a, b) => {
+        if (!a.createdAt || !b.createdAt) return 0;
+        // Firestore Timestamp version:
+        return b.createdAt.toMillis() - a.createdAt.toMillis();
+
+        // If numeric timestamp:
+        // return b.createdAt - a.createdAt;
+      });
+      // One single group
       this.groupedCategories = [{
         tag: this.selectedCategory,
         posts: filtered
@@ -97,13 +108,16 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Group posts by each category they belong to, then sort them newest-first
-   * using the createdAt field (Firestore Timestamp).
+   * Group posts by each category, sort them newest-first,
+   * and optionally limit how many posts to keep per category.
+   *
+   * @param posts Array of posts to be grouped
+   * @param limit Optional number to limit posts per category (e.g. 8). If not provided, no limit.
    */
-  private groupByCategory(posts: Post[]): Array<{ tag: string; posts: Post[] }> {
+  private groupByCategory(posts: Post[], limit?: number): Array<{ tag: string; posts: Post[] }> {
     const catMap = new Map<string, Post[]>();
 
-    // 1. Build a map from category -> array of posts
+    // 1. Build a map: category -> array of posts
     posts.forEach(post => {
       post.categories.forEach(cat => {
         if (!catMap.has(cat)) {
@@ -113,25 +127,24 @@ export class MainComponent implements OnInit, OnChanges {
       });
     });
 
-    // 2. Convert catMap to an array of objects with { tag, posts }
+    // 2. Convert to an array and sort each category's posts by newest first
     const result: Array<{ tag: string; posts: Post[] }> = [];
     for (const [tag, psts] of catMap.entries()) {
-      // Sort by descending creation date
       psts.sort((a, b) => {
-        // Ensure both have a valid createdAt
         if (!a.createdAt || !b.createdAt) return 0;
-
-        // ----- Firestore Timestamp sort: -----
-        // toMillis() converts Firestore Timestamp to a numeric millisecond value
+        // If using Firestore Timestamp:
         return b.createdAt.toMillis() - a.createdAt.toMillis();
-        
-        // If your createdAt was simply a number (ms since epoch),
-        // you can do: 
-        // return (b.createdAt as number) - (a.createdAt as number);
+
+        // If numeric:
+        // return b.createdAt - a.createdAt;
       });
 
-      result.push({ tag, posts: psts });
+      // Limit to `limit` if provided
+      const limitedPosts = limit ? psts.slice(0, limit) : psts;
+
+      result.push({ tag, posts: limitedPosts });
     }
+
     return result;
   }
 
@@ -144,6 +157,9 @@ export class MainComponent implements OnInit, OnChanges {
     return group.tag;
   }
 
+  /**
+   * Opens a dialog with post details.
+   */
   openDetailDialog(post: Post): void {
     this.dialog.open(PostDetailComponent, {
       width: '80vw',
