@@ -1,0 +1,12 @@
+<section>
+    <div class="registration-container1">
+      <h2>All Post</h2>
+      <p>Here you can see all the post</p>
+
+      <div *ngIf="isLoggedIn" class="user"></div>
+      
+    <button [routerLink]="['/new']">Create Post</button>
+    <button [routerLink]="['/']">Root</button>
+    </div>
+  </section>
+  

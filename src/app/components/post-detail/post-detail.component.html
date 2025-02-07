@@ -28,10 +28,7 @@
 <!-- If content could be undefined, fallback to '' -->
 <div class="detail-content" [innerHTML]="(post?.content || '') | safeHtml"></div>
 
-<!-- Images carousel or listing -->
-<div *ngFor="let image of post?.images ?? []">
-  <img class="centered-image"[src]="image" alt="" />
-</div>
+
 
 
 <!-- Close dialog -->

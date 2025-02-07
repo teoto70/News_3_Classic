@@ -1,22 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
 
 * {
-  margin: 0;
-  padding: 0;
-  color: rgb(0, 0, 0);
-  box-sizing: border-box;
+ 
   font-family: 'Merriweather', serif;
-  border-top: rgb(0, 0, 0);
-  border-bottom: rgb(0, 0, 0);
-  border-left: rgb(0, 0, 0);
-  border-right: rgb(0, 0, 0);
+
   cursor: 	  pointer;
 }
 
 body {
   background-color:#ffffff;
   color: rgb(0, 0, 0);
-
+  .angular-editor-toolbar button i {
+    font-family: FontAwesome !important;
+    color: black !important;
+    }
+    .angular-editor-textarea img {
+      width: auto; /* Allow the image to scale proportionally */
+      height: auto; /* Allow the image to scale proportionally */
+      max-width: 100%; /* Ensure the image doesn't exceed its container's width */
+    }
+    .editor-content img {
+      width: auto; /* Allow the image to scale proportionally */
+      height: auto; /* Allow the image to scale proportionally */
+      max-width: 100%; /* Ensure the image doesn't exceed its container's width */
+    }
 }
 
 

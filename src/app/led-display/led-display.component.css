@@ -6,11 +6,11 @@
   width: 100%;
   z-index: 9999;    /* Adjust z-index as needed */
   background-color: #fffbfb; /* Optional: background color for the ticker */
-  padding: 5px 10px;      /* Optional: add some padding */
+  padding: 0px 10px;      /* Optional: add some padding */
   display: flex;
   align-items: center;
   border-bottom: 1px solid #000000; /* Optional: add a border */
-  border-top: 1px solid #000000; /* Optional: add a border */
+  border-top: 0px solid #000000; /* Optional: add a border */
   border-left: 1px solid #000000; /* Optional: add a border */
   border-right: 1px solid #000000; /* Optional: add a border */
   height: 50px;

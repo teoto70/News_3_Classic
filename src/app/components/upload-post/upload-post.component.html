@@ -34,11 +34,10 @@
         </div>
       </div>
 
-      <!-- Quill Editor -->
+      <!-- Angular Editor -->
       <div class="form-group module text-module">
         <h2>Text Module</h2>
-        <!-- Add #quillEditor reference here -->
-        <quill-editor #quillEditor formControlName="content" theme="snow"></quill-editor>
+        <angular-editor formControlName="content" [config]="editorConfig"></angular-editor>
       </div>
 
       <!-- Media Upload -->
@@ -67,8 +66,8 @@
       </mat-card-header>
 
       <mat-card-content class="preview-content">
-        <!-- Quill Content (Properly Sanitized) -->
-        <div class="quill-content" *ngIf="previewData.textContent" [innerHTML]="previewData.textContent | safeHtml"></div>
+        <!-- Angular Editor Content (Properly Sanitized) -->
+        <div class="editor-content" *ngIf="previewData.textContent" [innerHTML]="previewData.textContent | safeHtml"></div>
 
         <!-- Attached Files (Images/Videos) -->
         <div *ngIf="previewData.files.length > 0">

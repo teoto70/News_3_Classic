@@ -1,15 +1,18 @@
 .footer {
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
     height: 70px;
-    color:rgb(189, 26, 26) !important;
-  bottom: 0;
+    background: rgb(189, 26, 26);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
-    font-weight: 500;
-    position: relative; 
-    margin-top: auto; 
+    z-index: 9999; /* ensure it's not overlapped */
+  }
+   
   }
   p.footer-1 {
     color:rgb(255, 255, 255) !important;
@@ -27,7 +30,7 @@
   }
   
   nav {
-    margin-top: 5px;
+    margin-top: 0px;
   
     a {
       color: #ffffff;

@@ -7,7 +7,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { MainComponent } from './components/main/main.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { CommonModule } from '@angular/common';
-
+import { NewPostComponent } from './post/new-post/new-post.component';
+import { AllPostComponent } from './post/all-post/all-post.component';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,7 +19,8 @@ import { CommonModule } from '@angular/common';
     AdsAsideComponent,
     HeaderComponent,
     MainComponent,
-    FooterComponent
+    FooterComponent,
+   
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
@@ -37,7 +39,9 @@ export class AppComponent {
         if (
           event.url === '/login' ||
           event.url === '/create-user' ||
-          event.url === '/upload'
+          event.url === '/upload' ||
+          event.url === '/posts' ||
+          event.url === '/new'
         ) {
           this.isHiddenPage = true;
         } else {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import {
   FormBuilder,
@@ -8,8 +8,6 @@ import {
   Validators,
   ReactiveFormsModule
 } from '@angular/forms';
-import { QuillModule, QuillEditorComponent } from 'ngx-quill';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Firestore, collection, addDoc, Timestamp } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,14 +19,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { SafeHtmlPipe } from '../safehtml/safe-html.pipe';
-import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
+import { AngularEditorModule } from '@kolkov/angular-editor';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 @Component({
   selector: 'app-upload-post',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    QuillModule,
     CommonModule,
     SafeHtmlPipe,
     MatCardModule,
@@ -36,14 +34,13 @@ import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    
+    AngularEditorModule
   ],
   templateUrl: './upload-post.component.html',
   styleUrls: ['./upload-post.component.css']
 })
 export class UploadPostComponent implements OnInit {
   readonly categoriesList: string[] = ['News', 'Sports', 'Tech', 'Business'];
-  currentDate = new Date();
   uploadForm!: FormGroup;
   previewMode: boolean = false;
   previewData: any = {
@@ -53,17 +50,21 @@ export class UploadPostComponent implements OnInit {
     files: []
   };
 
-  // File arrays for images and videos
   images: File[] = [];
   videos: File[] = [];
 
-  // ViewChild referencing #quillEditor from the template
-  @ViewChild('quillEditor') quillEditor!: QuillEditorComponent;
+  editorConfig: AngularEditorConfig = {
+    editable: true,
+    spellcheck: true,
+    height: '250px',
+    minHeight: '150px',
+    placeholder: 'Enter content here...',
+    translate: 'no'
+  };
 
   constructor(
     private fb: FormBuilder,
     private location: Location,
-    private sanitizer: DomSanitizer,
     private firestore: Firestore,
     private storage: Storage
   ) {}
@@ -93,7 +94,6 @@ export class UploadPostComponent implements OnInit {
   }
 
   onPreview(): void {
-    // Convert the boolean array to a list of selected category names
     const selectedCategories = this.uploadForm.value.categories
       .map((selected: boolean, index: number) => (selected ? this.categoriesList[index] : null))
       .filter((category: string | null) => category !== null);
@@ -101,10 +101,9 @@ export class UploadPostComponent implements OnInit {
     this.previewData = {
       title: this.uploadForm.value.title || 'No Title',
       categories: selectedCategories,
-      textContent: this.uploadForm.value.content, // or quillEditor.quillEditor.root.innerHTML
+      textContent: this.uploadForm.value.content,
       files: [...this.images, ...this.videos]
     };
-
     this.previewMode = true;
   }
 
@@ -112,10 +111,16 @@ export class UploadPostComponent implements OnInit {
     this.previewMode = false;
   }
 
+  /**
+   * Determines if a file is an image based on its extension.
+   */
   isImage(fileName: string): boolean {
     return /\.(jpeg|jpg|png|gif)$/i.test(fileName);
   }
 
+  /**
+   * Creates a local preview URL for an uploaded file.
+   */
   getFileUrl(file: File): string {
     return URL.createObjectURL(file);
   }
@@ -129,72 +134,73 @@ export class UploadPostComponent implements OnInit {
     }
   }
 
+  async uploadFile(file: File, filePath: string): Promise<string> {
+    try {
+      const fileRef = ref(this.storage, filePath);
+      await uploadBytes(fileRef, file);
+      return getDownloadURL(fileRef);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error;
+    }
+  }
+
   async onUpload() {
-    if (this.uploadForm.valid) {
+    if (this.uploadForm.invalid) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    try {
       const postId = uuidv4();
 
-      // Arrays to store the URLs after upload
-      const imageUrls: string[] = [];
-      const videoUrls: string[] = [];
-
-      // We'll store our upload promises here
-      const storagePromises: Promise<void>[] = [];
-
       // Upload images
-      for (const image of this.images) {
-        const imageRef = ref(this.storage, `posts/${postId}/images/${image.name}`);
-        const uploadPromise = uploadBytes(imageRef, image)
-          .then(() => {
-            // Return a promise that resolves when the download URL is retrieved
-            return getDownloadURL(imageRef).then(url => {
-              // We do NOT return the result of push() (which would be a number)
-              imageUrls.push(url);
-            });
-          });
-        storagePromises.push(uploadPromise);
-      }
+      const imageUploadPromises = this.images.map((image) =>
+        this.uploadFile(image, `posts/${postId}/images/${image.name}`)
+      );
 
       // Upload videos
-      for (const video of this.videos) {
-        const videoRef = ref(this.storage, `posts/${postId}/videos/${video.name}`);
-        const uploadPromise = uploadBytes(videoRef, video)
-          .then(() => {
-            return getDownloadURL(videoRef).then(url => {
-              videoUrls.push(url);
-            });
-          });
-        storagePromises.push(uploadPromise);
-      }
+      const videoUploadPromises = this.videos.map((video) =>
+        this.uploadFile(video, `posts/${postId}/videos/${video.name}`)
+      );
 
-      // Wait for all uploads to finish
-      await Promise.all(storagePromises);
+      // Wait for all uploads to complete
+      const [imageUrls, videoUrls] = await Promise.all([
+        Promise.all(imageUploadPromises),
+        Promise.all(videoUploadPromises)
+      ]);
 
-      // Collect the selected categories
+      // Get selected categories
       const selectedCategories = this.uploadForm.value.categories
         .map((selected: boolean, index: number) => (selected ? this.categoriesList[index] : null))
         .filter((category: string | null) => category !== null);
 
-      // Add document to Firestore
-      const postCollection = collection(this.firestore, 'posts');
-      await addDoc(postCollection, {
+      // Prepare post data
+      const post = {
         id: postId,
         title: this.uploadForm.value.title,
-        // Or retrieve from Quill Editor directly:
-        content: this.quillEditor.quillEditor.root.innerHTML,
+        content: this.uploadForm.value.content,
         categories: selectedCategories,
         images: imageUrls,
         videos: videoUrls,
         createdAt: Timestamp.now(),
         views: 0,
         likes: 0
-      });
+      };
 
-      // Reset form and arrays
+      // Save post to Firestore
+      const postCollection = collection(this.firestore, 'posts');
+      await addDoc(postCollection, post);
+
+      // Reset form & files
       this.uploadForm.reset();
       this.images = [];
       this.videos = [];
 
       alert('Post uploaded successfully!');
+    } catch (error) {
+      console.error("Failed to upload post:", error);
+      alert('Error uploading post. Please try again.');
     }
   }
 }

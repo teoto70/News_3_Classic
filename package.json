@@ -25,6 +25,8 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@kolkov/angular-editor": "^3.0.0-beta.2",
+    "bootstrap": "^5.3.3",
     "firebase": "^11.2.0",
     "ngx-infinite-scroll": "^19.0.0",
     "ngx-quill": "^27.0.0",
