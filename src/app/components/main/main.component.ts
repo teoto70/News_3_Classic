@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PostService, Post } from '../../services/post.service';
 import { PostDetailComponent } from '../post-detail/post-detail.component';
+// If needed, import Firestore Timestamp to illustrate usage
+// import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-main',
@@ -41,7 +43,9 @@ export class MainComponent implements OnInit, OnChanges {
     this.postService.posts$.subscribe({
       next: (posts) => {
         this.isLoading = false;
-        this.allPosts = [...posts]; // copy to local array
+
+        // Copy to local array
+        this.allPosts = [...posts];
 
         // Add a 'thumbnailUrl' for each post, randomly picking from images[]
         this.allPosts.forEach(post => {
@@ -65,7 +69,6 @@ export class MainComponent implements OnInit, OnChanges {
 
   /**
    * OnChanges: Re-group or re-filter whenever the @Input() selectedCategory changes.
-   * (This assumes we don't want to re-fetch from Firestore every time.)
    */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedCategory'] && !changes['selectedCategory'].isFirstChange()) {
@@ -96,12 +99,13 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Group posts by each category they belong to.
-   * If a post can have multiple categories, it appears in multiple groups.
+   * Group posts by each category they belong to, then sort them newest-first
+   * using the createdAt field (Firestore Timestamp).
    */
   private groupByCategory(posts: Post[]): Array<{ tag: string; posts: Post[] }> {
-    const catMap: Map<string, Post[]> = new Map();
+    const catMap = new Map<string, Post[]>();
 
+    // 1. Build a map from category -> array of posts
     posts.forEach(post => {
       post.categories.forEach(cat => {
         if (!catMap.has(cat)) {
@@ -111,9 +115,23 @@ export class MainComponent implements OnInit, OnChanges {
       });
     });
 
-    // Convert catMap to an array of objects with { tag, posts }
+    // 2. Convert catMap to an array of objects with { tag, posts }
     const result: Array<{ tag: string; posts: Post[] }> = [];
     for (const [tag, psts] of catMap.entries()) {
+      // Sort by descending creation date
+      psts.sort((a, b) => {
+        // Ensure both have a valid createdAt
+        if (!a.createdAt || !b.createdAt) return 0;
+
+        // ----- Firestore Timestamp sort: -----
+        // toMillis() converts Firestore Timestamp to a numeric millisecond value
+        return b.createdAt.toMillis() - a.createdAt.toMillis();
+        
+        // If your createdAt was simply a number (ms since epoch),
+        // you can do: 
+        // return (b.createdAt as number) - (a.createdAt as number);
+      });
+
       result.push({ tag, posts: psts });
     }
     return result;
