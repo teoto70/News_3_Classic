@@ -1,4 +1,4 @@
-// post-detail.component.ts
+// src/app/components/post-detail/post-detail.component.ts
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { Firestore } from '@angular/fire/firestore';
 import { shareIcons } from 'ngx-sharebuttons/icons';
 import { provideShareButtonsOptions } from 'ngx-sharebuttons';
 
-// Import Angular services for updating the meta tags
+// Import Angular services for updating meta tags
 import { Meta, Title } from '@angular/platform-browser';
 
 interface Comment {
@@ -110,7 +110,7 @@ export class PostDetailComponent implements OnInit {
   }
 
   // ----------------------------
-  // 3) SHARE
+  // 3) SHARE (Social Media)
   // ----------------------------
   shareFacebook(event: Event): void {
     event.preventDefault();
@@ -138,6 +138,22 @@ export class PostDetailComponent implements OnInit {
   }
 
   // ----------------------------
+  // 4) COPY LINK TO CLIPBOARD
+  // ----------------------------
+  copyLink(event: Event): void {
+    event.preventDefault();
+    if (!this.post) return;
+    const shareUrl = this.buildPostURL();
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        alert('Link copied to clipboard!');
+      })
+      .catch(err => {
+        console.error('Failed to copy link: ', err);
+      });
+  }
+
+  // ----------------------------
   // URL Builder
   // ----------------------------
   private buildPostURL(): string {
@@ -147,7 +163,7 @@ export class PostDetailComponent implements OnInit {
   }
 
   // ----------------------------
-  // Meta Tag Update
+  // META TAG UPDATE
   // ----------------------------
   private updateMetaTags(): void {
     if (!this.post) {
@@ -159,23 +175,21 @@ export class PostDetailComponent implements OnInit {
 
     // Update Open Graph tags
     this.meta.updateTag({ property: 'og:title', content: this.post.title });
-    // Assuming thumbnailUrl is set (you may want a default image if it's missing)
     const thumbnail = this.post.thumbnailUrl || '/assets/placeholder.jpg';
     this.meta.updateTag({ property: 'og:image', content: thumbnail });
 
-    // Optionally update other meta tags
-    this.meta.updateTag({ property: 'og:description', content: this.extractDescription(this.post.content) });
-    // Update Twitter Card meta tags if needed
+    // Update Twitter Card meta tags
     this.meta.updateTag({ name: 'twitter:title', content: this.post.title });
     this.meta.updateTag({ name: 'twitter:image', content: thumbnail });
+
+    // Optionally update a description if needed (currently omitted).
+    this.meta.updateTag({ property: 'og:description', content: this.extractDescription(this.post.content) });
   }
 
   /**
    * Optionally extract a plain-text description from HTML content.
-   * This helper can be customized to extract a snippet for the og:description tag.
    */
   private extractDescription(content: string): string {
-    // Remove HTML tags and trim the text; you can add more sophisticated logic here.
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = content;
     return tempDiv.textContent?.trim().slice(0, 160) || '';
