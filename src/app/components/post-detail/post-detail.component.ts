@@ -27,7 +27,7 @@ interface Comment {
     FormsModule,
     MatDialogModule,
     SafeHtmlPipe,
-    // provideShareButtonsOptions  // Uncomment if you decide to use it.
+    // provideShareButtonsOptions
   ]
 })
 export class PostDetailComponent implements OnInit {
@@ -44,9 +44,10 @@ export class PostDetailComponent implements OnInit {
   ngOnInit(): void {
     if (this.data?.post) {
       this.post = this.data.post;
-      // Increment views when the component loads.
+      // Increment views when the component loads
       this.incrementViews();
-      // Update the document title and meta tags for social sharing.
+
+      // Update the document title and meta tags for social sharing
       this.updateMetaTags();
     }
   }
@@ -175,13 +176,13 @@ export class PostDetailComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: this.post.title });
     const thumbnail = this.post.thumbnailUrl || '/assets/placeholder.jpg';
     this.meta.updateTag({ property: 'og:image', content: thumbnail });
+    // Specify image dimensions to ensure the image is processed correctly.
+    this.meta.updateTag({ property: 'og:image:width', content: '1200' });
+    this.meta.updateTag({ property: 'og:image:height', content: '630' });
 
     // Update Twitter Card meta tags
     this.meta.updateTag({ name: 'twitter:title', content: this.post.title });
     this.meta.updateTag({ name: 'twitter:image', content: thumbnail });
-
-    // Optionally update description (here we extract a short snippet from the content)
-    this.meta.updateTag({ property: 'og:description', content: this.extractDescription(this.post.content) });
   }
 
   /**
