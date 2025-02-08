@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PostService, Post } from '../../services/post.service';
 import { PostDetailComponent } from '../post-detail/post-detail.component';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
@@ -22,6 +23,8 @@ export class MainComponent implements OnInit, OnChanges {
   groupedCategories: Array<{ tag: string; posts: Post[] }> = [];
   isLoading = false;
   allPosts: Post[] = [];
+  // Flag to prevent multiple overlay openings
+  private overlayOpened: boolean = false;
 
   constructor(
     private postService: PostService,
@@ -54,7 +57,7 @@ export class MainComponent implements OnInit, OnChanges {
         // Apply the category filter/group logic
         this.applyCategoryFilter();
 
-        // Check URL query parameters for a post overlay trigger
+        // Check URL query parameters for a post overlay trigger (only once)
         this.checkQueryParamsForPost();
       },
       error: (err) => {
@@ -149,6 +152,10 @@ export class MainComponent implements OnInit, OnChanges {
    * Opens a dialog with post details.
    */
   openDetailDialog(post: Post): void {
+    // Optionally, check if a dialog is already open
+    if (this.dialog.openDialogs.length > 0) {
+      return;
+    }
     this.dialog.open(PostDetailComponent, {
       width: '80vw',
       maxWidth: '1000px',
@@ -160,18 +167,25 @@ export class MainComponent implements OnInit, OnChanges {
   /**
    * Checks the URL's query parameters for a "post" parameter.
    * If found, attempts to locate the post and opens the overlay dialog.
+   * Uses `take(1)` so that the subscription only fires once.
    */
   private checkQueryParamsForPost(): void {
-    this.route.queryParamMap.subscribe(params => {
+    // If the overlay is already opened, do nothing.
+    if (this.overlayOpened) {
+      return;
+    }
+    this.route.queryParamMap.pipe(take(1)).subscribe(params => {
       const docId = params.get('post');
       if (docId) {
+        // Mark that the overlay is being opened
+        this.overlayOpened = true;
         // Option 1: Try to locate the post in the already loaded posts
         const foundPost = this.allPosts.find(post => post.docId === docId);
         if (foundPost) {
           this.openDetailDialog(foundPost);
         } else if (this.postService.getPostById) {
           // Option 2: If not found, fetch the post via the service
-          this.postService.getPostById(docId).subscribe({
+          this.postService.getPostById(docId).pipe(take(1)).subscribe({
             next: (post) => {
               if (post) {
                 this.openDetailDialog(post);
