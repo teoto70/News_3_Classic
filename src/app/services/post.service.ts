@@ -1,17 +1,17 @@
 // post.service.ts
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 export interface Post {
-  docId?: string;  // <-- Add this line
+  docId?: string;  // Firestore document ID
   id: string;
   title: string;
   content: string;
   categories: string[];
   images: string[];
   videos: string[];
-  createdAt: any; // or Timestamp
+  createdAt: any; // Firestore Timestamp or other date format
   views: number;
   likes: number;
   thumbnailUrl?: string; 
@@ -19,14 +19,14 @@ export interface Post {
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  // 1) A private BehaviorSubject that holds the latest list of posts
+  // A private BehaviorSubject that holds the latest list of posts
   private postsSubject = new BehaviorSubject<Post[]>([]);
 
-  // 2) A public observable so components can subscribe to the current posts
+  // A public observable so components can subscribe to the current posts
   public posts$ = this.postsSubject.asObservable();
 
   constructor(private firestore: Firestore) {
-    // Optionally, you can call loadPosts() here if you want to load automatically.
+    // Optionally, you can call loadPosts() here to load automatically.
     // this.loadPosts();
   }
 
@@ -47,10 +47,20 @@ export class PostService {
 
   /**
    * Returns an Observable of all posts from Firestore.
-   * If you only want to read the data via posts$, keep this private.
    */
   public getAllPosts(): Observable<Post[]> {
     const postsRef = collection(this.firestore, 'posts');
     return collectionData(postsRef, { idField: 'docId' }) as Observable<Post[]>;
+  }
+
+  /**
+   * Returns an Observable for a single post identified by its document ID.
+   *
+   * @param docId The Firestore document ID of the post.
+   * @returns An Observable that emits the post data.
+   */
+  public getPostById(docId: string): Observable<Post> {
+    const postDocRef = doc(this.firestore, 'posts', docId);
+    return docData(postDocRef, { idField: 'docId' }) as Observable<Post>;
   }
 }

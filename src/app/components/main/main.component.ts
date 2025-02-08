@@ -1,5 +1,7 @@
+// main.component.ts
 import { Component, OnChanges, OnInit, Input, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PostService, Post } from '../../services/post.service';
 import { PostDetailComponent } from '../post-detail/post-detail.component';
@@ -9,7 +11,7 @@ import { PostDetailComponent } from '../post-detail/post-detail.component';
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,  // ensure MatDialogModule is imported if you're using MatDialog
+    MatDialogModule,  // Ensure MatDialogModule is imported if you're using MatDialog
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
@@ -23,16 +25,14 @@ export class MainComponent implements OnInit, OnChanges {
 
   constructor(
     private postService: PostService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
-  /**
-   * OnInit: Load posts once, then subscribe to them via posts$.
-   */
   ngOnInit(): void {
     this.isLoading = true;
 
-    // 1) Trigger the service to fetch from Firestore and emit to posts$
+    // 1) Trigger the service to fetch posts from Firestore
     this.postService.loadPosts();
 
     // 2) Subscribe to posts$ to get the updated list of posts
@@ -41,7 +41,7 @@ export class MainComponent implements OnInit, OnChanges {
         this.isLoading = false;
         this.allPosts = [...posts];
 
-        // Add a 'thumbnailUrl' for each post, randomly picking from images[]
+        // Add a 'thumbnailUrl' for each post by randomly selecting one from images[]
         this.allPosts.forEach(post => {
           if (post.images && post.images.length > 0) {
             const randomIndex = Math.floor(Math.random() * post.images.length);
@@ -51,8 +51,11 @@ export class MainComponent implements OnInit, OnChanges {
           }
         });
 
-        // Apply the category filter/group
+        // Apply the category filter/group logic
         this.applyCategoryFilter();
+
+        // Check URL query parameters for a post overlay trigger
+        this.checkQueryParamsForPost();
       },
       error: (err) => {
         this.isLoading = false;
@@ -61,9 +64,6 @@ export class MainComponent implements OnInit, OnChanges {
     });
   }
 
-  /**
-   * OnChanges: Re-group or re-filter whenever the @Input() selectedCategory changes.
-   */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedCategory'] && !changes['selectedCategory'].isFirstChange()) {
       this.applyCategoryFilter();
@@ -73,7 +73,7 @@ export class MainComponent implements OnInit, OnChanges {
   /**
    * Apply the filter/group logic:
    * - If "All" => group by category, show 8 newest per category
-   * - Else => show all posts in the chosen category, sorted newest-first (no limit)
+   * - Else => show all posts in the chosen category, sorted newest-first
    */
   private applyCategoryFilter(): void {
     if (this.allPosts.length === 0) {
@@ -82,24 +82,19 @@ export class MainComponent implements OnInit, OnChanges {
     }
 
     if (this.selectedCategory === 'All') {
-      // Group all posts by category, limit each category to 8
+      // Group all posts by category, limit each category to 8 posts
       this.groupedCategories = this.groupByCategory(this.allPosts, 8);
     } else {
-      // Show only posts in the selected category (no limit),
-      // but sorted by newest first
+      // Show only posts in the selected category (no limit), sorted newest first
       const filtered = this.allPosts.filter(post =>
         post.categories.includes(this.selectedCategory)
       );
-      // Sort by newest first
       filtered.sort((a, b) => {
         if (!a.createdAt || !b.createdAt) return 0;
-        // Firestore Timestamp version:
+        // If using Firestore Timestamp, convert to milliseconds:
         return b.createdAt.toMillis() - a.createdAt.toMillis();
-
-        // If numeric timestamp:
-        // return b.createdAt - a.createdAt;
       });
-      // One single group
+      // Create one group for the selected category
       this.groupedCategories = [{
         tag: this.selectedCategory,
         posts: filtered
@@ -108,8 +103,8 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Group posts by each category, sort them newest-first,
-   * and optionally limit how many posts to keep per category.
+   * Groups posts by each category, sorts them newest-first,
+   * and optionally limits how many posts to keep per category.
    *
    * @param posts Array of posts to be grouped
    * @param limit Optional number to limit posts per category (e.g. 8). If not provided, no limit.
@@ -117,7 +112,7 @@ export class MainComponent implements OnInit, OnChanges {
   private groupByCategory(posts: Post[], limit?: number): Array<{ tag: string; posts: Post[] }> {
     const catMap = new Map<string, Post[]>();
 
-    // 1. Build a map: category -> array of posts
+    // Build a map: category -> array of posts
     posts.forEach(post => {
       post.categories.forEach(cat => {
         if (!catMap.has(cat)) {
@@ -127,28 +122,21 @@ export class MainComponent implements OnInit, OnChanges {
       });
     });
 
-    // 2. Convert to an array and sort each category's posts by newest first
+    // Convert the map into an array and sort posts within each category
     const result: Array<{ tag: string; posts: Post[] }> = [];
     for (const [tag, psts] of catMap.entries()) {
       psts.sort((a, b) => {
         if (!a.createdAt || !b.createdAt) return 0;
-        // If using Firestore Timestamp:
         return b.createdAt.toMillis() - a.createdAt.toMillis();
-
-        // If numeric:
-        // return b.createdAt - a.createdAt;
       });
-
-      // Limit to `limit` if provided
       const limitedPosts = limit ? psts.slice(0, limit) : psts;
-
       result.push({ tag, posts: limitedPosts });
     }
 
     return result;
   }
 
-  // TrackBy functions for performance in *ngFor
+  // TrackBy functions for performance with *ngFor
   trackById(index: number, item: Post) {
     return item.id;
   }
@@ -166,6 +154,37 @@ export class MainComponent implements OnInit, OnChanges {
       maxWidth: '1000px',
       data: { post },
       panelClass: 'post-detail-dialog'
+    });
+  }
+
+  /**
+   * Checks the URL's query parameters for a "post" parameter.
+   * If found, attempts to locate the post and opens the overlay dialog.
+   */
+  private checkQueryParamsForPost(): void {
+    this.route.queryParamMap.subscribe(params => {
+      const docId = params.get('post');
+      if (docId) {
+        // Option 1: Try to locate the post in the already loaded posts
+        const foundPost = this.allPosts.find(post => post.docId === docId);
+        if (foundPost) {
+          this.openDetailDialog(foundPost);
+        } else if (this.postService.getPostById) {
+          // Option 2: If not found, fetch the post via the service
+          this.postService.getPostById(docId).subscribe({
+            next: (post) => {
+              if (post) {
+                this.openDetailDialog(post);
+              } else {
+                console.warn('Post not found for docId:', docId);
+              }
+            },
+            error: (err) => console.error('Error fetching post by docId:', err)
+          });
+        } else {
+          console.warn('getPostById method not implemented in PostService.');
+        }
+      }
     });
   }
 }

@@ -146,9 +146,18 @@ export class PostDetailComponent implements OnInit {
     window.open(linkedInUrl, '_blank', 'noopener');
   }
 
+ // ----------------------------
+  // URL Builder
+  // ----------------------------
   private buildPostURL(): string {
-    const domain = 'https://news3-57830--news3-57830.europe-west4.hosted.app/'; // Replace with your domain
-    // Use the Firestore docId for building the URL if desired
-    return `${domain}/post/${this.post?.docId}`;
+    const domain = window.location.origin; // Dynamically get the current domain
+
+    // Option 1: Route Parameter Approach
+    // Uncomment the line below if you are using a route parameter (e.g., /post/abc123)
+    // return `${domain}/post/${this.post?.docId}`;
+
+    // Option 2: Query Parameter Approach
+    // This will produce a URL like: https://yourdomain.com/?post=abc123
+    return `${domain}/?post=${this.post?.docId}`;
   }
 }
