@@ -1,14 +1,17 @@
+// post-detail.component.ts
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SafeHtmlPipe } from '../../pipes/safehtml.pipe'; // adjust path as needed
-import { Post } from '../../services/post.service'; // adjust path if needed
+import { SafeHtmlPipe } from '../../pipes/safehtml.pipe';
+import { Post } from '../../services/post.service';
 import { doc, updateDoc, increment, getDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { shareIcons } from 'ngx-sharebuttons/icons';
 import { provideShareButtonsOptions } from 'ngx-sharebuttons';
 
+// Import Angular services for updating the meta tags
+import { Meta, Title } from '@angular/platform-browser';
 
 interface Comment {
   name: string;
@@ -29,19 +32,14 @@ interface Comment {
   ]
 })
 export class PostDetailComponent implements OnInit {
-  // We assume that the Post object now has a "docId" property that contains
-  // the actual Firestore document ID.
   post: Post | null = null;
-
-  // For comments
-  //comments: Comment[] = [];
-  //commentName = '';
-  //commentMessage = '';//
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { post: Post },
     private firestore: Firestore,
-    private dialogRef: MatDialogRef<PostDetailComponent>
+    private dialogRef: MatDialogRef<PostDetailComponent>,
+    private meta: Meta,
+    private titleService: Title
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +47,9 @@ export class PostDetailComponent implements OnInit {
       this.post = this.data.post;
       // Increment views when the component loads
       this.incrementViews();
+
+      // Update the document title and meta tags for social sharing
+      this.updateMetaTags();
     }
   }
 
@@ -59,16 +60,6 @@ export class PostDetailComponent implements OnInit {
   onShare(): void {
     alert('Sharing post...');
   }
-
- //addComment(): void {
-   // if (!this.commentName.trim() || !this.commentMessage.trim()) return;
-   // this.comments.push({
-   //   name: this.commentName.trim(),
-   //   message: this.commentMessage.trim()
-   // });
-   // this.commentName = '';
-   // this.commentMessage = '';
- // }
 
   // ----------------------------
   // 1) VIEWS
@@ -146,18 +137,47 @@ export class PostDetailComponent implements OnInit {
     window.open(linkedInUrl, '_blank', 'noopener');
   }
 
- // ----------------------------
+  // ----------------------------
   // URL Builder
   // ----------------------------
   private buildPostURL(): string {
-    const domain = window.location.origin; // Dynamically get the current domain
-
-    // Option 1: Route Parameter Approach
-    // Uncomment the line below if you are using a route parameter (e.g., /post/abc123)
-    // return `${domain}/post/${this.post?.docId}`;
-
-    // Option 2: Query Parameter Approach
-    // This will produce a URL like: https://yourdomain.com/?post=abc123
+    const domain = window.location.origin;
+    // Example using the Query Parameter Approach:
     return `${domain}/?post=${this.post?.docId}`;
+  }
+
+  // ----------------------------
+  // Meta Tag Update
+  // ----------------------------
+  private updateMetaTags(): void {
+    if (!this.post) {
+      return;
+    }
+
+    // Update the document title
+    this.titleService.setTitle(this.post.title);
+
+    // Update Open Graph tags
+    this.meta.updateTag({ property: 'og:title', content: this.post.title });
+    // Assuming thumbnailUrl is set (you may want a default image if it's missing)
+    const thumbnail = this.post.thumbnailUrl || '/assets/placeholder.jpg';
+    this.meta.updateTag({ property: 'og:image', content: thumbnail });
+
+    // Optionally update other meta tags
+    this.meta.updateTag({ property: 'og:description', content: this.extractDescription(this.post.content) });
+    // Update Twitter Card meta tags if needed
+    this.meta.updateTag({ name: 'twitter:title', content: this.post.title });
+    this.meta.updateTag({ name: 'twitter:image', content: thumbnail });
+  }
+
+  /**
+   * Optionally extract a plain-text description from HTML content.
+   * This helper can be customized to extract a snippet for the og:description tag.
+   */
+  private extractDescription(content: string): string {
+    // Remove HTML tags and trim the text; you can add more sophisticated logic here.
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+    return tempDiv.textContent?.trim().slice(0, 160) || '';
   }
 }
