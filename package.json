@@ -8,7 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "build:ssr": "ng build --configuration production && ng run news:server:production",
     "serve:ssr": "node dist/news/server/main.js",
-    "test": "ng test"
+    "test": "ng test",
+    "scully": "scully",
+    "scully:serve": "scully serve"
   },
   "private": true,
   "dependencies": {
@@ -28,6 +30,9 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@kolkov/angular-editor": "^3.0.0-beta.2",
+    "@scullyio/init": "^2.1.21",
+    "@scullyio/scully-plugin-puppeteer": "^2.1.41",
+    "@scullyio/scully-plugin-platform-server": "^2.1.0",
     "bootstrap": "^5.3.3",
     "firebase": "^11.2.0",
     "ngx-infinite-scroll": "^19.0.0",
@@ -51,6 +56,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "@scullyio/scully-plugin-platform-server": "^2.1.0",
     "typescript": "~5.7.2"
   }
 }

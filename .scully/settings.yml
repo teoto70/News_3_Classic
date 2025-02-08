@@ -1,0 +1,10 @@
+identifier: me6ew2r1cc08x9sa
+appPort: 1864
+staticPort: 1668
+reloadPort: 2667
+hostName: localhost
+projectName: news
+homeFolder: C:\Users\teoto\news_3\News_3_Classic
+distFolder: dist/news
+outDir: C:\Users\teoto\news_3\News_3_Classic\dist\static\
+handle404: ''
