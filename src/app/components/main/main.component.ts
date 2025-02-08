@@ -1,18 +1,19 @@
-// main.component.ts
-import { Component, OnChanges, OnInit, Input, SimpleChanges } from '@angular/core';
+// src/app/components/main/main.component.ts
+import { Component, OnInit, OnChanges, Input, SimpleChanges, Inject, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { take } from 'rxjs/operators';
 import { PostService, Post } from '../../services/post.service';
 import { PostDetailComponent } from '../post-detail/post-detail.component';
-import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,  // Ensure MatDialogModule is imported if you're using MatDialog
+    RouterModule, // Provides ActivatedRoute at runtime
+    MatDialogModule,
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
@@ -26,10 +27,11 @@ export class MainComponent implements OnInit, OnChanges {
   // Flag to prevent multiple overlay openings
   private overlayOpened: boolean = false;
 
+  // Use the @Inject decorator with forwardRef to ensure Angular can resolve the token at runtime.
   constructor(
     private postService: PostService,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    @Inject(forwardRef(() => ActivatedRoute)) private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class MainComponent implements OnInit, OnChanges {
         this.isLoading = false;
         this.allPosts = [...posts];
 
-        // Add a 'thumbnailUrl' for each post by randomly selecting one from images[].
+        // For each post, assign a thumbnailUrl if available.
         this.allPosts.forEach(post => {
           if (post.images && post.images.length > 0) {
             const randomIndex = Math.floor(Math.random() * post.images.length);
@@ -95,30 +97,23 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Apply the filter/group logic:
-   * - If "All" => group by category, show 8 newest per category.
-   * - Else => show all posts in the chosen category, sorted newest-first.
+   * Groups posts by category and applies filtering.
    */
   private applyCategoryFilter(): void {
     if (this.allPosts.length === 0) {
       this.groupedCategories = [];
       return;
     }
-
     if (this.selectedCategory === 'All') {
-      // Group all posts by category, limiting each category to 8 posts.
       this.groupedCategories = this.groupByCategory(this.allPosts, 8);
     } else {
-      // Show only posts in the selected category (no limit), sorted newest first.
       const filtered = this.allPosts.filter(post =>
         post.categories.includes(this.selectedCategory)
       );
       filtered.sort((a, b) => {
         if (!a.createdAt || !b.createdAt) return 0;
-        // If using Firestore Timestamp, convert to milliseconds:
         return b.createdAt.toMillis() - a.createdAt.toMillis();
       });
-      // Create one group for the selected category.
       this.groupedCategories = [{
         tag: this.selectedCategory,
         posts: filtered
@@ -127,16 +122,10 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Groups posts by each category, sorts them newest-first,
-   * and optionally limits how many posts to keep per category.
-   *
-   * @param posts Array of posts to be grouped.
-   * @param limit Optional number to limit posts per category (e.g. 8). If not provided, no limit.
+   * Groups posts by category, optionally limiting the number of posts per category.
    */
   private groupByCategory(posts: Post[], limit?: number): Array<{ tag: string; posts: Post[] }> {
     const catMap = new Map<string, Post[]>();
-
-    // Build a map: category -> array of posts.
     posts.forEach(post => {
       post.categories.forEach(cat => {
         if (!catMap.has(cat)) {
@@ -145,8 +134,6 @@ export class MainComponent implements OnInit, OnChanges {
         catMap.get(cat)!.push(post);
       });
     });
-
-    // Convert the map into an array and sort posts within each category.
     const result: Array<{ tag: string; posts: Post[] }> = [];
     for (const [tag, psts] of catMap.entries()) {
       psts.sort((a, b) => {
@@ -156,16 +143,14 @@ export class MainComponent implements OnInit, OnChanges {
       const limitedPosts = limit ? psts.slice(0, limit) : psts;
       result.push({ tag, posts: limitedPosts });
     }
-
     return result;
   }
 
-  // TrackBy functions for performance with *ngFor.
-  trackById(index: number, item: Post) {
+  // TrackBy functions for *ngFor performance.
+  trackById(index: number, item: Post): any {
     return item.id;
   }
-
-  trackByTag(index: number, group: { tag: string; posts: Post[] }) {
+  trackByTag(index: number, group: { tag: string; posts: Post[] }): any {
     return group.tag;
   }
 
@@ -173,7 +158,6 @@ export class MainComponent implements OnInit, OnChanges {
    * Opens a dialog with post details.
    */
   openDetailDialog(post: Post): void {
-    // Optionally, check if a dialog is already open.
     if (this.dialog.openDialogs.length > 0) {
       return;
     }
@@ -186,17 +170,13 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Backup method: Checks the URL's query parameters for a "post" parameter.
-   * If found, attempts to locate the post in the loaded posts and opens the overlay dialog.
-   * Uses `take(1)` so that the subscription only fires once.
+   * Backup method: If the query parameter exists, find the post in the loaded posts.
    */
   private checkQueryParamsForPost(): void {
     this.route.queryParamMap.pipe(take(1)).subscribe(params => {
       const docId = params.get('post');
       if (docId) {
-        // Mark that the overlay is being opened.
         this.overlayOpened = true;
-        // Try to locate the post in the already loaded posts.
         const foundPost = this.allPosts.find(post => post.docId === docId);
         if (foundPost) {
           this.openDetailDialog(foundPost);
