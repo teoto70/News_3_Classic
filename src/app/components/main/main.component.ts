@@ -3,6 +3,7 @@ import { Component, OnInit, OnChanges, Input, SimpleChanges, Inject, forwardRef 
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Title, Meta } from '@angular/platform-browser';
 import { take } from 'rxjs/operators';
 import { PostService, Post } from '../../services/post.service';
 import { PostDetailComponent } from '../post-detail/post-detail.component';
@@ -12,7 +13,7 @@ import { PostDetailComponent } from '../post-detail/post-detail.component';
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule, // Provides ActivatedRoute at runtime
+    RouterModule,       // Provides ActivatedRoute at runtime
     MatDialogModule,
   ],
   templateUrl: './main.component.html',
@@ -27,23 +28,34 @@ export class MainComponent implements OnInit, OnChanges {
   // Flag to prevent multiple overlay openings
   private overlayOpened: boolean = false;
 
-  // Use the @Inject decorator with forwardRef to ensure Angular can resolve the token at runtime.
+  // Use the @Inject decorator with forwardRef to inject ActivatedRoute.
   constructor(
     private postService: PostService,
     private dialog: MatDialog,
-    @Inject(forwardRef(() => ActivatedRoute)) private route: ActivatedRoute
+    @Inject(forwardRef(() => ActivatedRoute)) private route: ActivatedRoute,
+    private titleService: Title,
+    private meta: Meta
   ) {}
 
   ngOnInit(): void {
-    // Immediately check for the query parameter so the overlay can be loaded faster.
+    // Immediately check for the "post" query parameter so the overlay can be loaded faster.
     this.route.queryParamMap.pipe(take(1)).subscribe(params => {
       const docId = params.get('post');
       if (docId) {
-        this.overlayOpened = true; // Mark overlay as being opened
-        // Fetch the post immediately by its document ID.
+        this.overlayOpened = true; // Mark that the overlay will be opened.
+        // Fetch the specific post by its document ID.
         this.postService.getPostById(docId).pipe(take(1)).subscribe({
           next: (post) => {
             if (post) {
+              // Update meta tags for social media previews.
+              this.titleService.setTitle(post.title);
+              const thumbnail = post.thumbnailUrl ||
+                (post.images && post.images.length > 0 ? post.images[0] : '/assets/placeholder.jpg');
+              this.meta.updateTag({ property: 'og:title', content: post.title });
+              this.meta.updateTag({ property: 'og:image', content: thumbnail });
+              this.meta.updateTag({ name: 'twitter:title', content: post.title });
+              this.meta.updateTag({ name: 'twitter:image', content: thumbnail });
+              // Open the overlay to display the post.
               this.openDetailDialog(post);
             } else {
               console.warn('Post not found for docId:', docId);
@@ -74,11 +86,11 @@ export class MainComponent implements OnInit, OnChanges {
           }
         });
 
-        // Apply the category filter/group logic.
+        // Apply category filtering and grouping.
         this.applyCategoryFilter();
 
-        // As a backup: if no overlay has been opened yet and the query parameter exists,
-        // try to find the post in the loaded posts.
+        // Backup: if no overlay has been opened yet and a query parameter exists,
+        // try to locate the post in the loaded posts.
         if (!this.overlayOpened) {
           this.checkQueryParamsForPost();
         }
@@ -97,7 +109,7 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Groups posts by category and applies filtering.
+   * Applies filtering and grouping of posts by category.
    */
   private applyCategoryFilter(): void {
     if (this.allPosts.length === 0) {
@@ -122,7 +134,7 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Groups posts by category, optionally limiting the number of posts per category.
+   * Groups posts by category, optionally limiting the number per category.
    */
   private groupByCategory(posts: Post[], limit?: number): Array<{ tag: string; posts: Post[] }> {
     const catMap = new Map<string, Post[]>();
@@ -155,7 +167,7 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Opens a dialog with post details.
+   * Opens a dialog (overlay) with the post details.
    */
   openDetailDialog(post: Post): void {
     if (this.dialog.openDialogs.length > 0) {
@@ -170,7 +182,7 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Backup method: If the query parameter exists, find the post in the loaded posts.
+   * Backup method: If a "post" query parameter exists, attempt to find the post in the loaded posts.
    */
   private checkQueryParamsForPost(): void {
     this.route.queryParamMap.pipe(take(1)).subscribe(params => {
