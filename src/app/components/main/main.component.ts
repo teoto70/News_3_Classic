@@ -1,20 +1,19 @@
 // src/app/components/main/main.component.ts
 import { Component, OnInit, OnChanges, Input, SimpleChanges, Inject, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { MatDialogModule } from '@angular/material/dialog';
 import { Title, Meta } from '@angular/platform-browser';
 import { take } from 'rxjs/operators';
 import { PostService, Post } from '../../services/post.service';
-import { PostDetailComponent } from '../post-detail/post-detail.component';
 
 @Component({
   selector: 'app-main',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,       // Provides ActivatedRoute at runtime
-    MatDialogModule,
+    RouterModule,       // Provides ActivatedRoute and Router at runtime
+    MatDialogModule     // (Optional if you need dialog features elsewhere)
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
@@ -25,52 +24,19 @@ export class MainComponent implements OnInit, OnChanges {
   groupedCategories: Array<{ tag: string; posts: Post[] }> = [];
   isLoading = false;
   allPosts: Post[] = [];
-  // Flag to prevent multiple overlay openings
-  private overlayOpened: boolean = false;
 
-  // Use the @Inject decorator with forwardRef to inject ActivatedRoute.
   constructor(
     private postService: PostService,
-    private dialog: MatDialog,
+    private router: Router, // Router is injected for navigation
     @Inject(forwardRef(() => ActivatedRoute)) private route: ActivatedRoute,
     private titleService: Title,
     private meta: Meta
   ) {}
 
   ngOnInit(): void {
-    // Immediately check for the "post" query parameter so the overlay can be loaded faster.
-    this.route.queryParamMap.pipe(take(1)).subscribe(params => {
-      const docId = params.get('post');
-      if (docId) {
-        this.overlayOpened = true; // Mark that the overlay will be opened.
-        // Fetch the specific post by its document ID.
-        this.postService.getPostById(docId).pipe(take(1)).subscribe({
-          next: (post) => {
-            if (post) {
-              // Update meta tags for social media previews.
-              this.titleService.setTitle(post.title);
-              const thumbnail = post.thumbnailUrl ||
-                (post.images && post.images.length > 0 ? post.images[0] : '/assets/placeholder.jpg');
-              this.meta.updateTag({ property: 'og:title', content: post.title });
-              this.meta.updateTag({ property: 'og:image', content: thumbnail });
-              this.meta.updateTag({ name: 'twitter:title', content: post.title });
-              this.meta.updateTag({ name: 'twitter:image', content: thumbnail });
-              // Open the overlay to display the post.
-              this.openDetailDialog(post);
-            } else {
-              console.warn('Post not found for docId:', docId);
-            }
-          },
-          error: (err) => console.error('Error fetching post by docId:', err)
-        });
-      }
-    });
-
-    // Load all posts for the main page.
     this.isLoading = true;
     this.postService.loadPosts();
 
-    // Subscribe to posts$ to get the updated list of posts.
     this.postService.posts$.subscribe({
       next: (posts) => {
         this.isLoading = false;
@@ -79,21 +45,14 @@ export class MainComponent implements OnInit, OnChanges {
         // For each post, assign a thumbnailUrl if available.
         this.allPosts.forEach(post => {
           if (post.images && post.images.length > 0) {
-            const randomIndex = Math.floor(Math.random() * post.images.length);
-            post.thumbnailUrl = post.images[randomIndex];
+            // Here we use the first image as the thumbnail (or use post.thumbnailUrl if available)
+            post.thumbnailUrl = post.thumbnailUrl || post.images[0];
           } else {
             post.thumbnailUrl = '/assets/placeholder.jpg';
           }
         });
 
-        // Apply category filtering and grouping.
         this.applyCategoryFilter();
-
-        // Backup: if no overlay has been opened yet and a query parameter exists,
-        // try to locate the post in the loaded posts.
-        if (!this.overlayOpened) {
-          this.checkQueryParamsForPost();
-        }
       },
       error: (err) => {
         this.isLoading = false;
@@ -134,7 +93,7 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Groups posts by category, optionally limiting the number per category.
+   * Groups posts by category, optionally limiting the number per group.
    */
   private groupByCategory(posts: Post[], limit?: number): Array<{ tag: string; posts: Post[] }> {
     const catMap = new Map<string, Post[]>();
@@ -158,7 +117,9 @@ export class MainComponent implements OnInit, OnChanges {
     return result;
   }
 
-  // TrackBy functions for *ngFor performance.
+  /**
+   * TrackBy functions for performance.
+   */
   trackById(index: number, item: Post): any {
     return item.id;
   }
@@ -167,33 +128,9 @@ export class MainComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Opens a dialog (overlay) with the post details.
+   * Navigates to the dedicated Post Detail route.
    */
-  openDetailDialog(post: Post): void {
-    if (this.dialog.openDialogs.length > 0) {
-      return;
-    }
-    this.dialog.open(PostDetailComponent, {
-      width: '80vw',
-      maxWidth: '1000px',
-      data: { post },
-      panelClass: 'post-detail-dialog'
-    });
-  }
-
-  /**
-   * Backup method: If a "post" query parameter exists, attempt to find the post in the loaded posts.
-   */
-  private checkQueryParamsForPost(): void {
-    this.route.queryParamMap.pipe(take(1)).subscribe(params => {
-      const docId = params.get('post');
-      if (docId) {
-        this.overlayOpened = true;
-        const foundPost = this.allPosts.find(post => post.docId === docId);
-        if (foundPost) {
-          this.openDetailDialog(foundPost);
-        }
-      }
-    });
+  openPostDetail(post: Post): void {
+    this.router.navigate(['/post', post.docId]);
   }
 }

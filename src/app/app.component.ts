@@ -1,60 +1,51 @@
+// src/app/app.component.ts
 import { Component } from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { LedDisplayComponent } from './led-display/led-display.component';
-import { AdsAsideComponent } from './core/ads-aside/ads-aside.component';
-import { HeaderComponent } from './components/header/header.component';
-import { MainComponent } from './components/main/main.component';
-import { FooterComponent } from './components/footer/footer.component';
 import { CommonModule } from '@angular/common';
-import { NewPostComponent } from './post/new-post/new-post.component';
-import { AllPostComponent } from './post/all-post/all-post.component';
+
+// Always-visible components
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { AdsAsideComponent } from './core/ads-aside/ads-aside.component';
+import { LedDisplayComponent } from './led-display/led-display.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, // Needed for directives like *ngIf
+    CommonModule,
     RouterOutlet,
-    LedDisplayComponent,
-    AdsAsideComponent,
     HeaderComponent,
-    MainComponent,
     FooterComponent,
-   
+    AdsAsideComponent,
+    LedDisplayComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'news';
-  selectedCategory: string = 'All';
-  isHiddenPage = false;
+  isLoggedIn: boolean = false; // Track whether the user is logged in
 
   constructor(private router: Router) {
-    // Use NavigationEnd events to ensure the URL is updated
+    // Example login check (replace with your actual auth logic)
+    this.isLoggedIn = !!localStorage.getItem('token');
+
+    // (Optional) Log navigation events for debugging.
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        // Check if the URL is one of the routes where the main content should be hidden
-        if (
-          event.url === '/login' ||
-          event.url === '/create-user' ||
-          event.url === '/upload' ||
-          event.url === '/posts' ||
-          event.url === '/new'
-        ) {
-          this.isHiddenPage = true;
-        } else {
-          this.isHiddenPage = false;
-        }
+        console.log('Navigated to:', event.url);
       });
   }
 
   /**
    * Called when the HeaderComponent emits a categorySelected event.
-   * @param category The category selected by the user.
+   * You can use this to filter posts in your main view.
    */
   onCategorySelect(category: string): void {
-    this.selectedCategory = category;
+    // Your implementation here.
+    console.log('Category selected:', category);
   }
 }

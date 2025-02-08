@@ -1,40 +1,47 @@
-<h1>{{ post?.title }}</h1>
+<!-- src/app/components/post-detail/post-detail.component.html -->
+<div class="post-detail">
+  <!-- Top Header Section: Two Columns -->
+  <div class="header-section">
+    <div class="title-column">
+      <h1 class="post-title">{{ post.title }}</h1>
+    </div>
+    <div class="thumbnail-column">
+      <img 
+        [src]="(post.images && post.images.length > 0) ? post.images[0] : '/assets/placeholder.jpg'" 
+        [alt]="post.title" 
+        class="thumbnail-1x1" 
+      />
+    </div>
+  </div>
 
-<div class="detail-meta">
-  <span class="likes">Likes: {{ post?.likes || 0 }}</span>
-  <span class="views">Views: {{ post?.views || 0 }}</span>
-  <span class="created-at">
-    <!-- If createdAt is a number, convert it to a Date first -->
-    Created at: 
-   
-        {{ post?.createdAt?.toDate() | date:'medium' }} 
-    
-  </span>
-  <button class="like" (click)="onLikeClick()"></button>
+  <!-- Meta & Sharing Section -->
+  <div class="detail-meta">
+    <span class="likes">Likes: {{ post.likes || 0 }}</span>
+    <span class="views">Views: {{ post.views || 0 }}</span>
+    <span class="created-at">
+      Created at: {{ post.createdAt.toDate() | date:'medium' }}
+    </span>
+    <button class="like" (click)="onLikeClick()">Like</button>
 
-  <!-- Placeholder for share button -->
-  <!-- Social icons with links -->
-  <a class="socialshare" href="#" (click)="shareFacebook($event)">
-    <img src="/images/facebook.png" alt="Facebook" />
-  </a>
-  <a class="socialshare" href="#" (click)="shareTwitter($event)">
-    <img src="/images/twitter.png" alt="Twitter" />
-  </a>
-  <a class="socialshare" href="#" (click)="shareLinkedIn($event)">
-    <img src="/images/linkedin.png" alt="LinkedIn" />
-  </a>
+    <!-- Social share buttons -->
+    <a class="socialshare" href="#" (click)="shareFacebook($event)">
+      <img src="/images/facebook.png" alt="Facebook" />
+    </a>
+    <a class="socialshare" href="#" (click)="shareTwitter($event)">
+      <img src="/images/twitter.png" alt="Twitter" />
+    </a>
+    <a class="socialshare" href="#" (click)="shareLinkedIn($event)">
+      <img src="/images/linkedin.png" alt="LinkedIn" />
+    </a>
+    <!-- Copy Link button -->
+    <button class="copy-link" (click)="copyLink($event)">Copy Link</button>
+  </div>
 
- <!-- Copy link button -->
- <button class="copy-link" (click)="copyLink($event)">Copy Link</button>
-</div>
+  <!-- Post Content -->
+  <div class="detail-content" [innerHTML]="(post.content || '') | safeHtml"></div>
 
-<!-- If content could be undefined, fallback to '' -->
-<div class="detail-content" [innerHTML]="(post?.content || '') | safeHtml"></div>
-
-
-
-
-<!-- Close dialog -->
-<div class="dialog-actions">
-  <button (click)="onClose()">Close</button>
+  <!-- Back Button -->
+  <div class="dialog-actions">
+    <button (click)="goBack()">Back</button>
+  </div>
 </div>
