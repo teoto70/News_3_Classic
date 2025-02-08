@@ -9,7 +9,6 @@ import { doc, updateDoc, increment, getDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { shareIcons } from 'ngx-sharebuttons/icons';
 import { provideShareButtonsOptions } from 'ngx-sharebuttons';
-
 // Import Angular services for updating meta tags
 import { Meta, Title } from '@angular/platform-browser';
 
@@ -28,7 +27,7 @@ interface Comment {
     FormsModule,
     MatDialogModule,
     SafeHtmlPipe,
-    // provideShareButtonsOptions
+    // provideShareButtonsOptions  // Uncomment if you decide to use it.
   ]
 })
 export class PostDetailComponent implements OnInit {
@@ -45,10 +44,9 @@ export class PostDetailComponent implements OnInit {
   ngOnInit(): void {
     if (this.data?.post) {
       this.post = this.data.post;
-      // Increment views when the component loads
+      // Increment views when the component loads.
       this.incrementViews();
-
-      // Update the document title and meta tags for social sharing
+      // Update the document title and meta tags for social sharing.
       this.updateMetaTags();
     }
   }
@@ -173,7 +171,7 @@ export class PostDetailComponent implements OnInit {
     // Update the document title
     this.titleService.setTitle(this.post.title);
 
-    // Update Open Graph tags
+    // Update Open Graph meta tags
     this.meta.updateTag({ property: 'og:title', content: this.post.title });
     const thumbnail = this.post.thumbnailUrl || '/assets/placeholder.jpg';
     this.meta.updateTag({ property: 'og:image', content: thumbnail });
@@ -182,12 +180,12 @@ export class PostDetailComponent implements OnInit {
     this.meta.updateTag({ name: 'twitter:title', content: this.post.title });
     this.meta.updateTag({ name: 'twitter:image', content: thumbnail });
 
-    // Optionally update a description if needed (currently omitted).
+    // Optionally update description (here we extract a short snippet from the content)
     this.meta.updateTag({ property: 'og:description', content: this.extractDescription(this.post.content) });
   }
 
   /**
-   * Optionally extract a plain-text description from HTML content.
+   * Extracts a plain-text snippet from HTML content to use as a description.
    */
   private extractDescription(content: string): string {
     const tempDiv = document.createElement('div');
