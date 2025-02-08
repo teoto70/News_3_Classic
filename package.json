@@ -6,6 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "build:ssr": "ng build --configuration production && ng run news:server:production",
+  "serve:ssr": "node dist/news/server/main.js",
     "test": "ng test"
   },
   "private": true,
@@ -26,7 +28,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@kolkov/angular-editor": "^3.0.0-beta.2",
-    "@nguniversal/express-engine": "^7.0.2",
+    "@nguniversal/builders": "^16.2.0",
+    "@nguniversal/express-engine": "^16.2.0",
     "bootstrap": "^5.3.3",
     "firebase": "^11.2.0",
     "ngx-infinite-scroll": "^19.0.0",
