@@ -147,7 +147,7 @@ export class PostDetailComponent implements OnInit {
   }
 
   private buildPostURL(): string {
-    const domain = 'https://example.com'; // Replace with your domain
+    const domain = 'https://news3-57830--news3-57830.europe-west4.hosted.app/'; // Replace with your domain
     // Use the Firestore docId for building the URL if desired
     return `${domain}/post/${this.post?.docId}`;
   }
