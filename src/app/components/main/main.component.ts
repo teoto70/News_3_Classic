@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router'; // Added Router here
 import { PostService, Post } from '../../services/post.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class MainComponent implements OnInit {
   isLoading = false;
   allPosts: Post[] = [];
 
-  constructor(private route: ActivatedRoute, private postService: PostService) {}
+  constructor(private route: ActivatedRoute, private postService: PostService, private router: Router) {} // Added router injection
 
   ngOnInit(): void {
     // Subscribe to the route parameter to get the selected category.
@@ -104,8 +104,12 @@ export class MainComponent implements OnInit {
     return group.tag;
   }
 
+  // Updated openPostDetail method to navigate to the post detail page
   openPostDetail(post: Post): void {
-    // Implement navigation to a post detail view if needed.
-    console.log('Open post detail for:', post);
+    if (post.docId) {
+      this.router.navigate(['/post', post.docId]);
+    } else {
+      console.error('Post document ID is missing');
+    }
   }
 }
