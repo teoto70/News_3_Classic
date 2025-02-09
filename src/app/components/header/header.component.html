@@ -24,9 +24,9 @@
     </nav>
 
     <!-- (Optional) User Section -->
-    <div class="user">
+    <div class="user" *ngIf="isLoggedIn">
       <button routerLink="/upload" class="createBtn">Create Post</button>
-      <button class="logoutBtn">Logout</button>
+      <button class="logoutBtn" (click)="logout()">Logout</button>
     </div>
   </div>
 </header>
