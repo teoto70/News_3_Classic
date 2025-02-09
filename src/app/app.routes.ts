@@ -11,7 +11,10 @@ import { PostResolver } from './services/post-resolver';
 
 export const routes: Routes = [
   // Default route: when the app starts, load MainComponent.
-  { path: '', component: MainComponent },
+   // Redirect an empty path to the main component with 'All' as the default category.
+   { path: '', redirectTo: 'main/All', pathMatch: 'full' },
+   { path: 'main/:selectedCategory', component: MainComponent },
+   // Optionally, add a wildcard route:
   
   // Other routes for login, user creation, uploading, etc.
   { path: 'login', component: LoginComponent },

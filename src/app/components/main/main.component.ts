@@ -1,51 +1,42 @@
-// src/app/components/main/main.component.ts
-import { Component, OnInit, OnChanges, Input, SimpleChanges, Inject, forwardRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MatDialogModule } from '@angular/material/dialog';
-import { Title, Meta } from '@angular/platform-browser';
-import { take } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { PostService, Post } from '../../services/post.service';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,       // Provides ActivatedRoute and Router at runtime
-    MatDialogModule     // (Optional if you need dialog features elsewhere)
-  ],
+  imports: [CommonModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit, OnChanges {
-  @Input() selectedCategory: string = 'All';
-
+export class MainComponent implements OnInit {
+  selectedCategory: string = 'All';
   groupedCategories: Array<{ tag: string; posts: Post[] }> = [];
   isLoading = false;
   allPosts: Post[] = [];
 
-  constructor(
-    private postService: PostService,
-    private router: Router, // Router is injected for navigation
-    @Inject(forwardRef(() => ActivatedRoute)) private route: ActivatedRoute,
-    private titleService: Title,
-    private meta: Meta
-  ) {}
+  constructor(private route: ActivatedRoute, private postService: PostService) {}
 
   ngOnInit(): void {
+    // Subscribe to the route parameter to get the selected category.
+    this.route.paramMap.subscribe(params => {
+      this.selectedCategory = params.get('selectedCategory') || 'All';
+      console.log('Main component selected category:', this.selectedCategory);
+      this.applyCategoryFilter();
+    });
+
+    // Load posts
     this.isLoading = true;
     this.postService.loadPosts();
-
     this.postService.posts$.subscribe({
       next: (posts) => {
         this.isLoading = false;
         this.allPosts = [...posts];
 
-        // For each post, assign a thumbnailUrl if available.
+        // Assign a thumbnail if available, or a placeholder.
         this.allPosts.forEach(post => {
           if (post.images && post.images.length > 0) {
-            // Here we use the first image as the thumbnail (or use post.thumbnailUrl if available)
             post.thumbnailUrl = post.thumbnailUrl || post.images[0];
           } else {
             post.thumbnailUrl = '/assets/placeholder.jpg';
@@ -61,15 +52,6 @@ export class MainComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedCategory'] && !changes['selectedCategory'].isFirstChange()) {
-      this.applyCategoryFilter();
-    }
-  }
-
-  /**
-   * Applies filtering and grouping of posts by category.
-   */
   private applyCategoryFilter(): void {
     if (this.allPosts.length === 0) {
       this.groupedCategories = [];
@@ -92,9 +74,6 @@ export class MainComponent implements OnInit, OnChanges {
     }
   }
 
-  /**
-   * Groups posts by category, optionally limiting the number per group.
-   */
   private groupByCategory(posts: Post[], limit?: number): Array<{ tag: string; posts: Post[] }> {
     const catMap = new Map<string, Post[]>();
     posts.forEach(post => {
@@ -117,9 +96,7 @@ export class MainComponent implements OnInit, OnChanges {
     return result;
   }
 
-  /**
-   * TrackBy functions for performance.
-   */
+  // TrackBy functions for ngFor performance
   trackById(index: number, item: Post): any {
     return item.id;
   }
@@ -127,10 +104,8 @@ export class MainComponent implements OnInit, OnChanges {
     return group.tag;
   }
 
-  /**
-   * Navigates to the dedicated Post Detail route.
-   */
   openPostDetail(post: Post): void {
-    this.router.navigate(['/post', post.docId]);
+    // Implement navigation to a post detail view if needed.
+    console.log('Open post detail for:', post);
   }
 }

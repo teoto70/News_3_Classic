@@ -1,57 +1,48 @@
 <aside class="right-sidebar">
-    <!-- Google Ads Placeholder -->
-    <div class="ad-placeholder">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-                crossorigin="anonymous"></script>
-        <!-- Your Ad Unit -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
+  <!-- Google Ads Placeholder (top) -->
+  <div class="ad-placeholder">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+              crossorigin="anonymous"></script>
+      <!-- Your Ad Unit -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
 
+  <!-- "Check also:" text -->
+  <div class="check-also">Check also:</div>
 
-    
- <!-- "Check also:" text -->
- <div class="check-also">Check also:</div>
- <!-- Post Placeholder -->
- <div class="ad-placeholder">
-   <!-- Random post thumbnail -->
-   <div class="random-post" *ngIf="randomPost">
-     <!-- Wrapper with position: relative -->
-     <div class="thumbnail-wrapper">
-       <img
-         class="thumbnail-image"
-         [src]="randomPost.thumbnailUrl"
-         [alt]="randomPost.title"
-       />
-       <div class="post-name-overlay">
-         {{ randomPost.title }}
-       </div>
-     </div>
-   </div>
- </div>
-      
-        
-        
-    <!-- Google Ads Placeholder -->
-    <div class="ad-placeholder">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-                crossorigin="anonymous"></script>
-        <!-- Your Ad Unit -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+  <!-- Random posts placeholders -->
+  <div class="ad-placeholder" *ngFor="let post of randomPosts">
+    <div class="random-post" (click)="openRandomPost(post)" style="cursor: pointer;">
+      <div class="thumbnail-wrapper">
+        <img class="thumbnail-image" [src]="post.thumbnailUrl" [alt]="post.title" />
+        <div class="post-name-overlay">
+          {{ post.title }}
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Google Ads Placeholder (bottom) -->
+  <div class="ad-placeholder">
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+              crossorigin="anonymous"></script>
+      <!-- Your Ad Unit -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
 </aside>

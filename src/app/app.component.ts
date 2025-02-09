@@ -9,6 +9,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdsAsideComponent } from './core/ads-aside/ads-aside.component';
 import { LedDisplayComponent } from './led-display/led-display.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ import { LedDisplayComponent } from './led-display/led-display.component';
     HeaderComponent,
     FooterComponent,
     AdsAsideComponent,
-    LedDisplayComponent
+    LedDisplayComponent,
+    RouterModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

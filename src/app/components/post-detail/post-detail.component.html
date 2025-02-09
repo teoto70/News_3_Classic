@@ -5,7 +5,7 @@
     <div class="title-column">
       <h1 class="post-title">{{ post.title }}</h1>
     </div>
-    <div class="thumbnail-column">
+    <div class="thumbnail-column" style="display: none;">
       <img 
         [src]="(post.images && post.images.length > 0) ? post.images[0] : '/assets/placeholder.jpg'" 
         [alt]="post.title" 
@@ -21,7 +21,7 @@
     <span class="created-at">
       Created at: {{ post.createdAt.toDate() | date:'medium' }}
     </span>
-    <button class="like" (click)="onLikeClick()">Like</button>
+    <button class="like" (click)="onLikeClick()"></button>
 
     <!-- Social share buttons -->
     <a class="socialshare" href="#" (click)="shareFacebook($event)">

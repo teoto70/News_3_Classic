@@ -1,6 +1,5 @@
 <header class="header">
   <div class="header-container">
-
     <!-- Logo -->
     <div class="logo-container">
       <a routerLink="/">
@@ -8,20 +7,14 @@
       </a>
     </div>
 
-    <!-- Hamburger Icon (Visible on Mobile) -->
-    <button 
-      class="hamburger"
-      (click)="toggleMenu()"
-      aria-label="Toggle Navigation"
-    >
-      <!-- Simple Hamburger Icon (3 bars). Use any icon you like -->
+    <!-- Hamburger Icon (for mobile) -->
+    <button class="hamburger" (click)="toggleMenu()" aria-label="Toggle Navigation">
       <span class="bar"></span>
       <span class="bar"></span>
       <span class="bar"></span>
     </button>
 
     <!-- Navigation -->
-    <!-- We bind the class "nav-open" when isMenuOpen == true -->
     <nav [class.nav-open]="isMenuOpen" class="nav">
       <ul>
         <li *ngFor="let category of categoriesList">
@@ -31,10 +24,9 @@
     </nav>
 
     <!-- (Optional) User Section -->
-    <div *ngIf="isLoggedIn" class="user">
+    <div class="user">
       <button routerLink="/upload" class="createBtn">Create Post</button>
-      <button (click)="logout()" class="logoutBtn">Logout</button>
+      <button class="logoutBtn">Logout</button>
     </div>
-
   </div>
 </header>

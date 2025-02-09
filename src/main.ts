@@ -6,6 +6,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { environment } from './environments/environment'; // your Firebase config
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideRouter } from '@angular/router';
+import { routes } from './app/app.routes';
 bootstrapApplication(AppComponent, {
   ...appConfig,
   providers: [
@@ -15,7 +17,8 @@ bootstrapApplication(AppComponent, {
        provideFirebaseApp(() => initializeApp(environment.firebase)),
 
        // Provide Firestore
-       provideFirestore(() => getFirestore())
+       provideFirestore(() => getFirestore()),
+       provideRouter(routes)
   ]
 })
   .catch((err) => console.error(err)); 
