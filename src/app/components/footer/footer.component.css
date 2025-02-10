@@ -1,6 +1,6 @@
 /* Footer wrapper */
 .footer {
-  position: relative; /* Keep it in the document flow */
+  position: fixed; /* Keep it in the document flow */
   bottom: 0;
   left: 0;
   right: 0;
